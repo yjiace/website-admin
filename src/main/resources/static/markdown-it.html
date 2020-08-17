@@ -111,6 +111,7 @@
                         $('.source').val($('.source').val() + img);
                         render();
                     }
+
                 };
                 xhr.open('POST', '/api/upload/img', true);
                 xhr.send(formData);
