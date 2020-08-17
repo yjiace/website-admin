@@ -63,7 +63,7 @@
 
         let mdHtml = window.markdownit(defaults);
 
-        function render(){
+        function render() {
             $('.result-html').html(mdHtml.render($('.source').val()));
             Prism.highlightAll();
         }
@@ -130,7 +130,7 @@
                 event.preventDefault();
                 uploadImg(event.originalEvent.dataTransfer);
             },
-            scroll:function(){
+            scroll: function () {
                 $(".result-html").scrollTop($(this).scrollTop());
                 $(".result-html").scrollLeft($(this).scrollLeft());
             }
