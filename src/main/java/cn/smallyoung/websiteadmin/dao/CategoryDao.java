@@ -6,5 +6,5 @@ import cn.smallyoung.websiteadmin.entity.Category;
 /**
  * @author yangn
  */
-public interface CategoryDao extends BaseDao<Category, Long> {
+public interface CategoryDao extends BaseDao<Category, String> {
 }

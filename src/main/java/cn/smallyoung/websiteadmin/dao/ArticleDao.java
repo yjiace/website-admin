@@ -6,5 +6,5 @@ import cn.smallyoung.websiteadmin.entity.Article;
 /**
  * @author yangn
  */
-public interface ArticleDao  extends BaseDao<Article, Long> {
+public interface ArticleDao  extends BaseDao<Article, String> {
 }

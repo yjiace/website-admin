@@ -1,6 +1,5 @@
 package cn.smallyoung.websiteadmin.entity;
 
-import cn.hutool.core.lang.Dict;
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -9,7 +8,6 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 类目
@@ -44,10 +42,4 @@ public class Category extends BaseEntity implements Serializable {
 
     @Transient
     private Integer count;
-
-    public Map<String, Object> toMap(){
-        return Dict.create().set("id", this.id).set("name", this.name)
-                .set("backgroundColor", this.backgroundColor)
-                .set("count", this.articles != null ? this.articles.size() : 0);
-    }
 }

@@ -39,7 +39,7 @@ public class WebController {
     }
 
     @GetMapping("/findArticle")
-    public Article getArticle(Long id){
+    public Article getArticle(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
         }
@@ -56,10 +56,15 @@ public class WebController {
     }
 
     @DeleteMapping("/deleteArticle")
-    public void deleteArticle(Long id){
+    public void deleteArticle(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
         }
         articleService.delete(id);
+    }
+
+    @PostMapping("updateMd")
+    public void updateMd(String id, String mdContent, String htmlContent, String tags){
+        articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent, tags);
     }
 }

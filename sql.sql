@@ -9,7 +9,7 @@ CREATE TABLE t_article (
 	html_content TEXT,
 	introduction VARCHAR ( 255 ),
 	md_content TEXT,
-	tag VARCHAR ( 255 ),
+	tags VARCHAR ( 255 ),
 	title VARCHAR ( 255 ),
 	weight INT4,
 	category_id int8,
