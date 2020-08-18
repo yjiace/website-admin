@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 /**
@@ -77,7 +78,7 @@ public class Article extends BaseEntity implements Serializable {
         return Dict.create().set("id", this.id).set("title", this.title)
                 .set("category", this.category.toMap()).set("coverUrl", this.coverUrl)
                 .set("introduction", this.introduction).set("tags", this.tags)
-                .set("updateTime", this.getUpdateTime());
+                .set("updateTime", this.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }
 
