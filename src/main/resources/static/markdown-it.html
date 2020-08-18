@@ -71,8 +71,8 @@
         $('#sub').click(function () {
             $.post("/api/sys/web/updateMd", {
                 id: $('#id').val(),
-                mdContent: $('.source').html(),
-                htmlContent: mdHtml.render($('.source').html()),
+                mdContent: $('.source').val(),
+                htmlContent: mdHtml.render($('.source').val()),
                 tags: $('#tags').val()
             }, function (data) {
 

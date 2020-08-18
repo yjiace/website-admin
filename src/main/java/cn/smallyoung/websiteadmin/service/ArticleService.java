@@ -12,7 +12,6 @@ import cn.hutool.http.HtmlUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.ArticleDao;
 import cn.smallyoung.websiteadmin.entity.Article;
-import cn.smallyoung.websiteadmin.util.ConvertBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -46,8 +45,7 @@ public class ArticleService extends BaseService<Article, String> {
         Page<Article> articles = this.findAll(map, pageable);
 
         return new PageImpl<>(articles.getContent().stream()
-                .map(article -> ConvertBean.bean2Map(Article.class, "id","title","coverUrl","introduction","tags",
-                        "updateTime", "category.id","category.name","category.backgroundColor","category.count")).collect(Collectors.toList())
+                .map(Article::toMap).collect(Collectors.toList())
                 , pageable, articles.getTotalElements());
     }
 
@@ -72,7 +70,6 @@ public class ArticleService extends BaseService<Article, String> {
         FileUtil.touch(filePath);
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate("article.html");
-        System.out.println(content.length() + "**************");
         String result = template.render(Dict.create().set("article", article).set("tags", article.getTags().split(","))
                 .set("updateTime", article.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .set("worksNum", NumberUtil.div(content.length(), 1000, 1))

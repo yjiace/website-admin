@@ -1,11 +1,13 @@
 package cn.smallyoung.websiteadmin.entity;
 
+import cn.hutool.core.lang.Dict;
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author smallyoung
@@ -70,6 +72,13 @@ public class Article extends BaseEntity implements Serializable {
      */
     @Column(name = "tags" )
     private String tags;
+
+    public Map<String, Object> toMap(){
+        return Dict.create().set("id", this.id).set("title", this.title)
+                .set("category", this.category.toMap()).set("coverUrl", this.coverUrl)
+                .set("introduction", this.introduction).set("tags", this.tags)
+                .set("updateTime", this.getUpdateTime());
+    }
 }
 
 
