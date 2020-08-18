@@ -49,6 +49,16 @@ public class ArticleService extends BaseService<Article, String> {
                 , pageable, articles.getTotalElements());
     }
 
+    public Page<Map<String, Object>> findAll(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page - 1, size,
+                Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
+        Page<Article> articles = this.findAll(pageable);
+
+        return new PageImpl<>(articles.getContent().stream()
+                .map(Article::toMap).collect(Collectors.toList())
+                , pageable, articles.getTotalElements());
+    }
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Article save(Article article){

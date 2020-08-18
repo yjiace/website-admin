@@ -1,7 +1,6 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.util.StrUtil;
-import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
 import cn.smallyoung.websiteadmin.service.CategoryService;
@@ -43,11 +42,19 @@ public class WebApiController {
     /**
      * 根据类目查询文章
      */
-    @GetMapping("findArticle")
-    public Page<Map<String, Object>> findArticle(String category, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
+    @GetMapping("findArticleByCategory")
+    public Page<Map<String, Object>> findArticleByCategory(String category, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
         if(StrUtil.hasBlank(category)){
             throw new NullPointerException("Invalid parameter");
         }
         return articleService.findArticle(category, page, size);
+    }
+
+    /**
+     * 查询所以的文章列表
+     */
+    @GetMapping("findAllArticle")
+    public Page<Map<String, Object>> findAllArticle(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
+        return articleService.findAll(page, size);
     }
 }
