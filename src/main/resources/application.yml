@@ -1,0 +1,66 @@
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+  port: 8080
+spring:
+  datasource:
+    driver-class-name:  net.sf.log4jdbc.DriverSpy
+    password:
+    url: jdbc:log4jdbc:postgresql://localhost:5432/website-admin
+    username: postgres
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 15
+      connection-test-query: SELECT 1
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jackson:
+    serialization:
+      indent-output: true
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    open-in-view: false
+  mvc:
+    throw-exception-if-no-handler-found: true
+  redis:
+    database: 0
+    host: localhost
+    password:
+    port: 6379
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    servlet:
+      content-type: text/html
+    encoding: UTF-8
+    cache: false
+
+logging:
+  config: classpath:logback-spring.xml
+
+upyun:
+  bucketName: cdn-libs
+  userName: websiteadmin
+  password: Ne1phh3Otj46NzhZMIZfvyrIRpkSlZH8
+
+jwt:
+  tokenHeader: Authorization
+  tokenHead: smallyoung
+  secret: smallyoung
+  #token有效期(分)
+  expiration: 1440
+default:
+  password: 123456
+
+article:
+  catalog: /usr/local/nginx/templates/
+  img: /usr/local/nginx/img/article
+

@@ -17,7 +17,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/usr/local/webserver/log/info.%d.log</fileNamePattern>
+            <fileNamePattern>/usr/local/log/info.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
     <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -30,15 +30,15 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/usr/local/webserver/log/error.%d.log</fileNamePattern>
+            <fileNamePattern>/usr/local/log/error.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
-    <!-- show parameters for hibernate sql 专为 Hibernate 定制 -->
-    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
-    <logger name="org.hibernate.type.descriptor.sql.BasicExtractor" level="DEBUG"/>
-    <logger name="org.hibernate.SQL" level="DEBUG"/>
-    <logger name="org.hibernate.engine.QueryParameters" level="DEBUG"/>
-    <logger name="org.hibernate.engine.query.HQLQueryPlan" level="DEBUG"/>
+
+    <logger name="jdbc.sqlonly" level="OFF" />
+    <logger name="jdbc.audit" level="OFF" />
+    <logger name="jdbc.resultset" level="OFF" />
+    <logger name="jdbc.connection" level="INFO" />
+    <logger name="jdbc.sqltiming" level="INFO" />
 
     <root level="info">
         <appender-ref ref="consoleLog"/>
@@ -46,17 +46,4 @@
         <appender-ref ref="fileErrorLog"/>
     </root>
 
-    <!--日志异步到数据库 -->
-    <!--<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">-->
-    <!--&lt;!&ndash;日志异步到数据库 &ndash;&gt;-->
-    <!--<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">-->
-    <!--&lt;!&ndash;连接池 &ndash;&gt;-->
-    <!--<dataSource class="com.mchange.v2.c3p0.ComboPooledDataSource">-->
-    <!--<driverClass>com.mysql.jdbc.Driver</driverClass>-->
-    <!--<url>jdbc:mysql://127.0.0.1:3306/databaseName</url>-->
-    <!--<user>root</user>-->
-    <!--<password>root</password>-->
-    <!--</dataSource>-->
-    <!--</connectionSource>-->
-    <!--</appender>-->
 </configuration>

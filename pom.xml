@@ -5,16 +5,18 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.1.RELEASE</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>2.3.4.RELEASE</version>
+        <relativePath/>
     </parent>
     <groupId>cn.smallyoung</groupId>
     <artifactId>website-admin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>website-admin</name>
-    <description>Demo project for Spring Boot</description>
+    <description>后台管理系统</description>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
     </properties>
 
@@ -46,6 +48,29 @@
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.googlecode.log4jdbc</groupId>
+            <artifactId>log4jdbc</artifactId>
+            <version>1.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
@@ -63,28 +88,18 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.alibaba/druid-spring-boot-starter -->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>1.1.23</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
             <version>5.3.9</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/ognl/ognl -->
         <dependency>
             <groupId>ognl</groupId>
             <artifactId>ognl</artifactId>
             <version>3.2.14</version>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.upyun/java-sdk -->
         <dependency>
             <groupId>com.upyun</groupId>
             <artifactId>java-sdk</artifactId>
