@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author smallyoung
@@ -18,5 +19,20 @@ public class SysRoleService extends BaseService<SysRole, Long> {
 
     @Resource
     private SysRoleDao sysRoleDao;
+
+    @Override
+    public SysRole findOne(Long id){
+        return super.findOne(id);
+    }
+
+    /**
+     * 根据id集合查询所有角色
+     *
+     * @param idList 角色id列表
+     * @return 角色对象列表
+     */
+    public List<SysRole> findByIdInAndIsDelete(List<Long> idList) {
+        return sysRoleDao.findByIdInAndIsDelete(idList, "N");
+    }
 
 }

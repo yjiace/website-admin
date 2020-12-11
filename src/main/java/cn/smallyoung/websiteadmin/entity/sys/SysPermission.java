@@ -1,13 +1,14 @@
 package cn.smallyoung.websiteadmin.entity.sys;
 
 import cn.smallyoung.websiteadmin.base.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author smallyoung
@@ -61,18 +62,5 @@ public class SysPermission extends BaseEntity implements Serializable {
      */
     @Column(name = "type" )
     private Integer type;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "t_sys_role_permission",
-            joinColumns = {@JoinColumn(name = "permission_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    @JsonIgnore
-    private List<SysRole> roles;
-
-    /**
-     * 子菜单
-     */
-    @Transient
-    private List<SysPermission> subMenus;
 
 }

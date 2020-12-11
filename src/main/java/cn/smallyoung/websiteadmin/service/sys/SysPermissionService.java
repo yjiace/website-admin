@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author smallyoung
@@ -19,5 +20,15 @@ public class SysPermissionService extends BaseService<SysPermission, Long> {
 
     @Resource
     private SysPermissionDao sysPermissionDao;
+
+    /**
+     * 根据id集合查询所有权限
+     *
+     * @param idList 权限id列表
+     * @return 权限对象列表
+     */
+    public List<SysPermission> findByIdInAndIsDelete(List<Long> idList) {
+        return sysPermissionDao.findByIdInAndIsDelete(idList, "N");
+    }
 
 }

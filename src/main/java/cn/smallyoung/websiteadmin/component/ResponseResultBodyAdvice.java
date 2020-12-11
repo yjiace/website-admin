@@ -2,6 +2,8 @@ package cn.smallyoung.websiteadmin.component;
 
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.util.result.Result;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.springframework.core.MethodParameter;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.http.MediaType;
@@ -27,8 +29,15 @@ public class ResponseResultBodyAdvice implements ResponseBodyAdvice<Object> {
         return AnnotatedElementUtils.hasAnnotation(returnType.getContainingClass(), ANNOTATION_TYPE) || returnType.hasMethodAnnotation(ANNOTATION_TYPE);
     }
 
+    @SneakyThrows
     @Override
-    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class<? extends HttpMessageConverter<?>> selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
+                                  Class<? extends HttpMessageConverter<?>> selectedConverterType,
+                                  ServerHttpRequest request, ServerHttpResponse response) {
+        if (body instanceof String) {
+            ObjectMapper om = new ObjectMapper();
+            return om.writeValueAsString(Result.success(body));
+        }
         if (body instanceof Result) {
             return body;
         }
@@ -39,7 +48,7 @@ public class ResponseResultBodyAdvice implements ResponseBodyAdvice<Object> {
      * 异常处理
      */
     @ExceptionHandler(value = Exception.class)
-    public Result<?> handler(Exception e){
+    public Result<?> handler(Exception e) {
         return Result.failure(e.getMessage());
     }
 

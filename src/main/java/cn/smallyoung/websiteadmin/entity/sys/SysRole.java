@@ -1,12 +1,14 @@
 package cn.smallyoung.websiteadmin.entity.sys;
 
 import cn.smallyoung.websiteadmin.base.BaseEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import cn.smallyoung.websiteadmin.interfaces.DataName;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,17 +35,9 @@ public class SysRole extends BaseEntity implements Serializable {
     @Column(name = "comments" )
     private String comments;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "t_sys_user_role",
-            joinColumns = {@JoinColumn(name = "role_id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id")})
-    @JsonIgnore
-    private List<SysUser> users;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "t_sys_role_permission",
-            joinColumns = {@JoinColumn(name = "role_id")},
-            inverseJoinColumns = {@JoinColumn(name = "permission_id")})
-    @JsonIgnore
-    private List<SysPermission> permissions;
+    @DataName(name = "权限")
+    @Where(clause = " is_delete = 'N' ")
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinTable(name = "t_sys_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
+    private List<SysPermission> sysPermissions = new ArrayList<>();
 }

@@ -54,7 +54,6 @@ CREATE TABLE t_sys_role (
 );
 CREATE TABLE t_sys_role_permission ( role_id int8 NOT NULL, permission_id int8 NOT NULL );
 CREATE TABLE t_sys_user (
-	id int8 NOT NULL,
 	create_time TIMESTAMP,
 	creator int8,
 	is_delete VARCHAR ( 2 ),
@@ -65,7 +64,7 @@ CREATE TABLE t_sys_user (
 	phone VARCHAR ( 11 ),
 	sex int4,
 	username VARCHAR ( 255 ),
-	PRIMARY KEY ( id )
+	PRIMARY KEY ( username )
 );
 CREATE TABLE t_sys_user_role ( user_id int8 NOT NULL, role_id int8 NOT NULL );
 CREATE SEQUENCE seq_article START 1 INCREMENT 1;

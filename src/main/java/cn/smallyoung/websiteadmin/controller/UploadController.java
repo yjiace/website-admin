@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileWriter;
