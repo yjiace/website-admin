@@ -29,7 +29,7 @@ public class SysPermission extends BaseEntity implements Serializable {
      * 上级权限
      */
     @Column(name = "parent_id" )
-    private Long parentId;
+    private String parentId;
     /**
      * 权限名
      */

@@ -38,6 +38,18 @@ public class WebController {
                 PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
+    @GetMapping("getMdContentById")
+    public String getMdContentById(String id){
+        if(id == null){
+            throw new NullPointerException("参数错误");
+        }
+        Optional<Article> article = articleService.findById(id);
+        if(article.isPresent()){
+            return article.get().getMdContent();
+        }
+        throw new NullPointerException("获取文章对象失败");
+    }
+
     @GetMapping("/findArticle")
     public Article getArticle(String id){
         if(id == null){
@@ -64,7 +76,7 @@ public class WebController {
     }
 
     @PostMapping("updateMd")
-    public void updateMd(String id, String mdContent, String htmlContent, String tags){
-        articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent, tags);
+    public void updateMd(String id, String mdContent, String htmlContent){
+        articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent);
     }
 }

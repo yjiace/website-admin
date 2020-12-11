@@ -11,5 +11,5 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Transactional(readOnly = true)
-public class SysOperationLogService extends BaseService<SysOperationLog, Long> {
+public class SysOperationLogService extends BaseService<SysOperationLog, String> {
 }

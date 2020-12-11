@@ -15,13 +15,13 @@ import java.util.List;
  */
 @Service
 @Transactional(readOnly = true)
-public class SysRoleService extends BaseService<SysRole, Long> {
+public class SysRoleService extends BaseService<SysRole, String> {
 
     @Resource
     private SysRoleDao sysRoleDao;
 
     @Override
-    public SysRole findOne(Long id){
+    public SysRole findOne(String id){
         return super.findOne(id);
     }
 
@@ -31,7 +31,7 @@ public class SysRoleService extends BaseService<SysRole, Long> {
      * @param idList 角色id列表
      * @return 角色对象列表
      */
-    public List<SysRole> findByIdInAndIsDelete(List<Long> idList) {
+    public List<SysRole> findByIdInAndIsDelete(List<String> idList) {
         return sysRoleDao.findByIdInAndIsDelete(idList, "N");
     }
 

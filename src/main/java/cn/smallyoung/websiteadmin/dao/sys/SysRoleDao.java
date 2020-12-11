@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author yangn
  */
-public interface SysRoleDao extends BaseDao<SysRole, Long> {
+public interface SysRoleDao extends BaseDao<SysRole, String> {
 
     /**
      * 修改角色状态
@@ -23,5 +23,5 @@ public interface SysRoleDao extends BaseDao<SysRole, Long> {
     @Query("update SysRole r set r.isDelete=?2 where r.id=?1")
     Integer updateStatus(Long id, String isDelete);
 
-    List<SysRole> findByIdInAndIsDelete(List<Long> idList, String isDelete);
+    List<SysRole> findByIdInAndIsDelete(List<String> idList, String isDelete);
 }

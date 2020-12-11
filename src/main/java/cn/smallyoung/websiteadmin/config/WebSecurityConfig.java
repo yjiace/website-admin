@@ -62,6 +62,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 基于token，所以不需要session
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and().cors()
                 .and()
                 .authorizeRequests()
                 // 允许对于网站静态资源的无授权访问
@@ -71,13 +72,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/favicon.ico",
                         "/**/*.html",
                         "/**/*.css",
-                        "/**/*.js",
-                        "/api/web/**",
-                        "/api/sys/web/**"
+                        "/**/*.js"
                 )
                 .permitAll()
                 // 对登录注册要允许匿名访问
-                .antMatchers("/login","/captcha")
+                .antMatchers("/login","/captcha","/api/sys/web/**","/api/web/**")
                 .permitAll()
                 //跨域请求会先进行一次options请求
                 .antMatchers(HttpMethod.OPTIONS)

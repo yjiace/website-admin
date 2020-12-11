@@ -46,8 +46,8 @@ public class SysRoleController {
         List<SysPermission> sysPermissions = sysPermissionService.findAll(WebUtils.getParametersStartingWith(request, "search_"));
         return TreeUtil.build(sysPermissions, "0", new TreeNodeConfig(),
                 (treeNode, tree) -> {
-                    tree.setId(treeNode.getId().toString());
-                    tree.setParentId(treeNode.getParentId().toString());
+                    tree.setId(treeNode.getId());
+                    tree.setParentId(treeNode.getParentId());
                     tree.setName(treeNode.getName());
                     tree.putExtra("val", treeNode.getVal());
                 });
@@ -73,7 +73,7 @@ public class SysRoleController {
     @PostMapping(value = "save")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_SAVE')")
     @SystemOperationLog(module = "角色管理", methods = "编辑角色", serviceClass = SysRoleService.class, queryMethod = "findOne",
-            parameterType = "Long", parameterKey = "roleVO.id")
+            parameterType = "String", parameterKey = "roleVO.id")
     public SysRole save(SysRole role) {
         role.setIsDelete("N");
         return sysRoleService.save(role);
@@ -97,14 +97,14 @@ public class SysRoleController {
     @DeleteMapping(value = "delete")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_DELETE')")
     @SystemOperationLog(module = "角色管理", methods = "删除角色", serviceClass = SysRoleService.class,
-            queryMethod = "findOne", parameterType = "Long", parameterKey = "id")
-    public SysRole delete(Long id) {
+            queryMethod = "findOne", parameterType = "String", parameterKey = "id")
+    public SysRole delete(String id) {
         SysRole role = checkRole(id);
         role.setIsDelete("Y");
         return sysRoleService.save(role);
     }
 
-    private SysRole checkRole(Long id) {
+    private SysRole checkRole(String id) {
         if (id == null) {
             throw new NullPointerException("参数错误");
         }

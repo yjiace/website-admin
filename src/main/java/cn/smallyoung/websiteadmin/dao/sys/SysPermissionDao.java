@@ -8,8 +8,8 @@ import java.util.List;
 /**
  * @author yangn
  */
-public interface SysPermissionDao extends BaseDao<SysPermission, Long> {
+public interface SysPermissionDao extends BaseDao<SysPermission, String> {
 
-    List<SysPermission> findByIdInAndIsDelete(List<Long> idList, String isDelete);
+    List<SysPermission> findByIdInAndIsDelete(List<String> idList, String isDelete);
 
 }

@@ -36,7 +36,7 @@ public class WebsiteAdminApplication {
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
-        corsConfiguration.setMaxAge(10000L);
+        corsConfiguration.setMaxAge(3000L);
         source.registerCorsConfiguration("/**",corsConfiguration);
         return new CorsFilter(source);
     }

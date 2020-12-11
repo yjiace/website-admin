@@ -200,7 +200,7 @@ public class SysUserController {
         SysUser user = checkUser(username);
         if (StrUtil.isNotBlank(roles)) {
             List<SysRole> roleList = sysRoleService.findByIdInAndIsDelete(Stream.of(roles.split(","))
-                    .map(String::trim).map(Long::parseLong).collect(Collectors.toList()));
+                    .map(String::trim).collect(Collectors.toList()));
             user.setRoles(roleList);
         } else {
             user.setRoles(null);

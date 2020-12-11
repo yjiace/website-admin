@@ -6,5 +6,5 @@ import cn.smallyoung.websiteadmin.entity.sys.SysOperationLog;
 /**
  * @author smallyoung
  */
-public interface SysOperationLogDao extends BaseDao<SysOperationLog, Long> {
+public interface SysOperationLogDao extends BaseDao<SysOperationLog, String> {
 }

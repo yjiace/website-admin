@@ -2,6 +2,7 @@ package cn.smallyoung.websiteadmin.entity;
 
 import cn.hutool.core.lang.Dict;
 import cn.smallyoung.websiteadmin.base.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,12 +35,14 @@ public class Article extends BaseEntity implements Serializable {
     /**
      * Markdown 内容
      */
+    @JsonIgnore
     @Column(name = "md_content" )
     private String mdContent;
 
     /**
      * 转换的页面内容
      */
+    @JsonIgnore
     @Column(name = "html_content" )
     private String htmlContent;
 

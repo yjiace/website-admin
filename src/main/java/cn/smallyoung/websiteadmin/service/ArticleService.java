@@ -59,18 +59,11 @@ public class ArticleService extends BaseService<Article, String> {
                 , pageable, articles.getTotalElements());
     }
 
-    @Override
     @Transactional(rollbackFor = Exception.class)
-    public Article save(Article article){
-        return articleDao.save(article);
-    }
-
-    @Transactional(rollbackFor = Exception.class)
-    public Article updateMdContentAndHtmlContent(String id, String mdContent, String htmlContent, String tags){
+    public void updateMdContentAndHtmlContent(String id, String mdContent, String htmlContent){
         Article article = articleDao.getOne(id);
         article.setMdContent(mdContent);
         article.setHtmlContent(htmlContent);
-        article.setTags(tags);
         //生成简介、字数统计
         String content = HtmlUtil.cleanHtmlTag(htmlContent);
         String introduction = content.substring(0, 50);
@@ -86,7 +79,7 @@ public class ArticleService extends BaseService<Article, String> {
                 .set("readTime", BigDecimal.valueOf(content.length()).divide(BigDecimal.valueOf(Long.parseLong("500")), BigDecimal.ROUND_UP)));
         FileWriter writer = new FileWriter(filePath, "UTF-8");
         writer.write(result);
-        return articleDao.save(article);
+        articleDao.save(article);
     }
 
 }

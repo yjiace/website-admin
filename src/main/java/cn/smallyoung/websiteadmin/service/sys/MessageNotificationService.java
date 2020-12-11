@@ -20,7 +20,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class MessageNotificationService extends BaseService<MessageNotification, Long> {
+public class MessageNotificationService extends BaseService<MessageNotification, String> {
 
     @Resource
     private SysUserService sysUserService;
@@ -68,7 +68,7 @@ public class MessageNotificationService extends BaseService<MessageNotification,
     /**
      * 查询未读信息总数
      */
-    public Long unreadCount(String username) {
+    public Integer unreadCount(String username) {
         return messageNotificationDao.countByRecipientUsername(username);
     }
 
@@ -77,7 +77,7 @@ public class MessageNotificationService extends BaseService<MessageNotification,
         messageNotificationDao.markReadWithOneClick(sysUserService.currentlyLoggedInUser());
     }
 
-    public List<MessageNotification> findByIdIn(List<Long> ids){
+    public List<MessageNotification> findByIdIn(List<String> ids){
         return messageNotificationDao.findByIdIn(ids);
     }
 }

@@ -39,7 +39,7 @@ public class MessageNotificationController {
      * 查询未读信息总数
      */
     @GetMapping(value = "findMessageCount")
-    public Long findMessageCount(){
+    public Integer findMessageCount(){
         return messageNotificationService.unreadCount(sysUserService.currentlyLoggedInUser());
     }
     /**
@@ -78,7 +78,7 @@ public class MessageNotificationController {
      * @param ids 主键ID
      */
     @DeleteMapping(value = "deleteMessageNotification")
-    public List<MessageNotification> deleteMessageNotification(@RequestParam(value = "ids") List<Long> ids) {
+    public List<MessageNotification> deleteMessageNotification(@RequestParam(value = "ids") List<String> ids) {
         if(CollUtil.isEmpty(ids)){
             throw new NullPointerException("参数错误");
         }
@@ -97,7 +97,7 @@ public class MessageNotificationController {
      * @param ids 主键ID列表
      */
     @PostMapping(value = "readingMessageNotification")
-    public List<MessageNotification> readingMessageNotification(@RequestParam(value = "ids") List<Long> ids) {
+    public List<MessageNotification> readingMessageNotification(@RequestParam(value = "ids") List<String> ids) {
         if(CollUtil.isEmpty(ids)){
             throw new NullPointerException("参数错误");
         }

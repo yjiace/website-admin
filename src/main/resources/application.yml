@@ -5,6 +5,8 @@ server:
       force: true
   port: 8080
 spring:
+  resources:
+    static-locations: classpath:/static
   datasource:
     driver-class-name:  net.sf.log4jdbc.DriverSpy
     password:

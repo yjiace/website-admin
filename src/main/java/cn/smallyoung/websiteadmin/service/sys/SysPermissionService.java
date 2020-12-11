@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class SysPermissionService extends BaseService<SysPermission, Long> {
+public class SysPermissionService extends BaseService<SysPermission, String> {
 
     @Resource
     private SysPermissionDao sysPermissionDao;
@@ -27,7 +27,7 @@ public class SysPermissionService extends BaseService<SysPermission, Long> {
      * @param idList 权限id列表
      * @return 权限对象列表
      */
-    public List<SysPermission> findByIdInAndIsDelete(List<Long> idList) {
+    public List<SysPermission> findByIdInAndIsDelete(List<String> idList) {
         return sysPermissionDao.findByIdInAndIsDelete(idList, "N");
     }
 
