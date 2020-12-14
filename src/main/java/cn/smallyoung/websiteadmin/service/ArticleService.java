@@ -74,7 +74,7 @@ public class ArticleService extends BaseService<Article, String> {
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate("article.html");
         String result = template.render(Dict.create().set("article", article).set("tags", article.getTags().split(","))
-                .set("updateTime", article.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                .set("createTime", article.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .set("worksNum", NumberUtil.div(content.length(), 1000, 1))
                 .set("readTime", BigDecimal.valueOf(content.length()).divide(BigDecimal.valueOf(Long.parseLong("500")), BigDecimal.ROUND_UP)));
         FileWriter writer = new FileWriter(filePath, "UTF-8");
