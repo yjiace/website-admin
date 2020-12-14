@@ -21,6 +21,7 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author smallyoung
@@ -108,12 +109,13 @@ public class SysRoleController {
         if (id == null) {
             throw new NullPointerException("参数错误");
         }
-        SysRole role = sysRoleService.findOne(id);
-        if (role == null) {
+        Optional<SysRole> optional = sysRoleService.findById(id);
+        if (!optional.isPresent()) {
             String error = String.format("根据ID【%s】没有找到该角色", id);
             log.error(error);
             throw new UsernameNotFoundException(error);
         }
+        SysRole role = optional.get();
         String isDelete = "Y";
         if (isDelete.equals(role.getIsDelete())) {
             String error = String.format("该角色【%s】已删除", id);

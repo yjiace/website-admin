@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author smallyoung
@@ -21,8 +22,8 @@ public class SysRoleService extends BaseService<SysRole, String> {
     private SysRoleDao sysRoleDao;
 
     @Override
-    public SysRole findOne(String id){
-        return super.findOne(id);
+    public Optional<SysRole> findById(String id){
+        return super.findById(id);
     }
 
     /**

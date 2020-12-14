@@ -24,10 +24,6 @@ public abstract class BaseService<T, ID extends Serializable> {
     @Autowired
     public BaseDao<T, ID> baseDao;
 
-    public T findOne(ID id) {
-        return baseDao.getOne(id);
-    }
-
     public Optional<T> findById(ID id) {
         return baseDao.findById(id);
     }

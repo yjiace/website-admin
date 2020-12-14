@@ -10,6 +10,7 @@ import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,8 +32,8 @@ public class UploadController {
     @Value("${article.img}")
     private String dirPath;
 
-    @PostMapping("img")
-    public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
+    @PostMapping("file/{path}")
+    public String uploadImg(MultipartFile file, @PathVariable String path) throws IOException, UpException {
         if(file == null){
             throw new NullPointerException("参数错误");
         }

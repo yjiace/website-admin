@@ -5,6 +5,11 @@ server:
       force: true
   port: 8080
 spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file -size: 10MB
+      max-request-size: 20MB
   resources:
     static-locations: classpath:/static
   datasource:
@@ -49,9 +54,9 @@ logging:
   config: classpath:logback-spring.xml
 
 upyun:
-  bucketName: cdn-libs
-  userName: websiteadmin
-  password: Ne1phh3Otj46NzhZMIZfvyrIRpkSlZH8
+  bucketName:
+  userName:
+  password:
 
 jwt:
   tokenHeader: Authorization

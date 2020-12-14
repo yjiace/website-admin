@@ -1,5 +1,7 @@
 package cn.smallyoung.websiteadmin.controller.sys;
 
+import cn.hutool.core.util.EscapeUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
@@ -45,7 +47,7 @@ public class WebController {
         }
         Optional<Article> article = articleService.findById(id);
         if(article.isPresent()){
-            return article.get().getMdContent();
+            return EscapeUtil.escape(article.get().getMdContent());
         }
         throw new NullPointerException("获取文章对象失败");
     }
@@ -64,6 +66,9 @@ public class WebController {
 
     @PostMapping("saveArticle")
     public Article saveArticle(Article article){
+        if(StrUtil.isBlank(article.getId())){
+            article.setIsDelete("N");
+        }
         return articleService.save(article);
     }
 

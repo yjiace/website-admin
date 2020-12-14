@@ -34,7 +34,7 @@ public class ResponseResultBodyAdvice implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType,
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request, ServerHttpResponse response) {
-        if (body instanceof String) {
+        if (body instanceof String || "java.lang.String".equals(returnType.getMethod().getReturnType().getName())) {
             ObjectMapper om = new ObjectMapper();
             return om.writeValueAsString(Result.success(body));
         }
@@ -49,6 +49,7 @@ public class ResponseResultBodyAdvice implements ResponseBodyAdvice<Object> {
      */
     @ExceptionHandler(value = Exception.class)
     public Result<?> handler(Exception e) {
+        e.printStackTrace();
         return Result.failure(e.getMessage());
     }
 
