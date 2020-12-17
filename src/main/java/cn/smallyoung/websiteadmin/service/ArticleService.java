@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -52,11 +53,17 @@ public class ArticleService extends BaseService<Article, String> {
     public Page<Map<String, Object>> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size,
                 Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
-        Page<Article> articles = this.findAll(pageable);
+        Page<Article> articles = this.findAll(Dict.create().set("AND_EQ_status", "Y"), pageable);
 
         return new PageImpl<>(articles.getContent().stream()
                 .map(Article::toMap).collect(Collectors.toList())
                 , pageable, articles.getTotalElements());
+    }
+
+    public List<Map<String, Object>> findRecommendArticle() {
+        List<Article> list = this.findAll(Dict.create().set("AND_EQ_status", "Y").set("AND_EQ_recommend", "Y"),
+                Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
+        return list.stream().map(Article::toMap).collect(Collectors.toList());
     }
 
     @Transactional(rollbackFor = Exception.class)

@@ -57,4 +57,13 @@ public class WebApiController {
     public Page<Map<String, Object>> findAllArticle(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
         return articleService.findAll(page, size);
     }
+
+    /**
+     * 查询推荐文章列表
+     */
+    @GetMapping("findRecommendArticle")
+    public List<Map<String, Object>> findRecommendArticle(){
+        return articleService.findRecommendArticle();
+    }
+
 }

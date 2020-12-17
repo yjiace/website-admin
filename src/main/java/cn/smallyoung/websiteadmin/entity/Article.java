@@ -77,10 +77,24 @@ public class Article extends BaseEntity implements Serializable {
     @Column(name = "tags" )
     private String tags;
 
+    /**
+     * 状态，Y:上线，N：下线
+     */
+    @Column(name = "status" )
+    private String status;
+
+    /**
+     * 是否推荐，Y:推荐，N：不推荐
+     */
+    @Column(name = "recommend" )
+    private String recommend;
+
     public Map<String, Object> toMap(){
         return Dict.create().set("id", this.id).set("title", this.title)
                 .set("category", this.category.toMap()).set("coverUrl", this.coverUrl)
                 .set("introduction", this.introduction).set("tags", this.tags)
+                .set("recommend", this.recommend)
+                .set("createTime", this.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .set("updateTime", this.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
     }
 }
