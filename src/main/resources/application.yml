@@ -70,4 +70,11 @@ default:
 article:
   catalog: /usr/local/nginx/templates/
   img: /usr/local/nginx/img/article
-
+aj:
+  captcha:
+    cache-type: redis
+  type: default
+  water-mark: smallyoung
+  slip-offset: 5
+  interference-options: 2
+  aes-status: true
