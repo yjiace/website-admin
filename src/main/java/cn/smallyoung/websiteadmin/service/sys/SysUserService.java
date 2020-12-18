@@ -1,6 +1,7 @@
 package cn.smallyoung.websiteadmin.service.sys;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.sys.SysUserDao;
 import cn.smallyoung.websiteadmin.entity.sys.SysUser;
@@ -35,7 +36,7 @@ public class SysUserService extends BaseService<SysUser, String> implements User
     private BCryptPasswordEncoder passwordEncoder;
 
     public SysUser findByUsername(String username) {
-        return sysUserDao.findByUsername(username);
+        return StrUtil.hasBlank(username) ? null : sysUserDao.findByUsername(username);
     }
 
     @Override

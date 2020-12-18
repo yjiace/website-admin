@@ -1,7 +1,5 @@
 package cn.smallyoung.websiteadmin.controller.sys;
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.CircleCaptcha;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
@@ -15,10 +13,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.OutputStream;
 
 /**
  * @author smallyoung
@@ -36,8 +30,6 @@ public class LoginController {
     private CaptchaService captchaService;
     @Resource
     private SysUserService sysUserService;
-
-    private static final String CHAPTER_KEY = "login-captcha";
 
     /**
      * 登录
@@ -61,16 +53,5 @@ public class LoginController {
         String token = sysUserService.login(username, password);
         log.info("用户【{}】登录系统", username);
         return Dict.create().set("tokenHead", tokenHead).set("token", token).set("username", username);
-    }
-
-    @GetMapping("/captcha")
-    public void captcha(HttpSession session, HttpServletResponse response) throws IOException {
-        response.setContentType("image/png");
-        CircleCaptcha captcha = CaptchaUtil.createCircleCaptcha(200, 100, 4, 20);
-        session.setAttribute(CHAPTER_KEY, captcha.getCode());
-        OutputStream os = response.getOutputStream();
-        captcha.write(os);
-        os.flush();
-        os.close();
     }
 }

@@ -79,7 +79,7 @@ public class SysUserController {
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_FIND') or authentication.principal.username.equals(#username)")
     public SysUser findById(String username) {
         if (StrUtil.hasBlank(username)) {
-            throw new NullPointerException("参数错误");
+            username = sysUserService.currentlyLoggedInUser();
         }
         return sysUserService.findByUsername(username);
     }
