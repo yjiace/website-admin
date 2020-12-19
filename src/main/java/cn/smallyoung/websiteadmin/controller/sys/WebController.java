@@ -7,12 +7,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
-import cn.smallyoung.websiteadmin.service.CategoryService;
 import cn.smallyoung.websiteadmin.vo.ArticleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
@@ -33,10 +33,9 @@ public class WebController {
 
     @Resource
     private ArticleService articleService;
-    @Resource
-    private CategoryService categoryService;
 
     @GetMapping("findAllArticle")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_FIND')")
     public Page<Article> findAllArticle(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
                                  @RequestParam(defaultValue = "9")Integer size){
         return articleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
@@ -44,6 +43,7 @@ public class WebController {
     }
 
     @GetMapping("getMdContentById")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
     public String getMdContentById(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
@@ -56,6 +56,7 @@ public class WebController {
     }
 
     @GetMapping("/findArticle")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_FIND')")
     public Article getArticle(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
@@ -68,6 +69,7 @@ public class WebController {
     }
 
     @PostMapping("saveArticle")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_SAVE')")
     public Article saveArticle(ArticleVO articleVO){
         Article article = new Article();
         if(StrUtil.isBlank(articleVO.getId())){
@@ -88,6 +90,7 @@ public class WebController {
     }
 
     @PostMapping("updateStatus")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATESTATUS')")
     public void updateStatus(String id, String key, String val){
         if(id == null || StrUtil.hasBlank(key, val)){
             throw new NullPointerException("参数错误");
@@ -107,6 +110,7 @@ public class WebController {
     }
 
     @DeleteMapping("/deleteArticle")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_DEL')")
     public void deleteArticle(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
@@ -115,6 +119,7 @@ public class WebController {
     }
 
     @PostMapping("updateMd")
+    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
     public void updateMd(String id, String mdContent, String htmlContent){
         articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent);
     }

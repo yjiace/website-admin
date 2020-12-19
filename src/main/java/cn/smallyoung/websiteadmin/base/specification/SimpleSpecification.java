@@ -54,7 +54,7 @@ public class SimpleSpecification<T> implements Specification<T> {
     }
 
     private Predicate generatePredicate(Root<T> root, CriteriaBuilder criteriaBuilder, SpecificationOperator so) {
-        if (so != null && so.getOperator() != null) {
+        if (so != null && so.getOperator() != null && so.getValue() != null && !so.getValue().equals("")) {
             switch (so.getOperator()) {
                 case EQ:
                     return criteriaBuilder.equal(root.get(so.getKey()), so.getValue());
