@@ -26,7 +26,7 @@ import java.io.IOException;
 @Slf4j
 @RestController
 @ResponseResultBody
-@RequestMapping("/api/upload")
+@RequestMapping("/upload")
 public class UploadController {
 
     @Value("${article.img}")

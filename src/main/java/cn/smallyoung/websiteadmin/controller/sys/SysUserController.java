@@ -81,7 +81,7 @@ public class SysUserController {
         if (StrUtil.hasBlank(username)) {
             username = sysUserService.currentlyLoggedInUser();
         }
-        return sysUserService.findByUsername(username);
+        return sysUserService.loadUserByUsername(username);
     }
 
     /**
@@ -119,12 +119,7 @@ public class SysUserController {
         if (StrUtil.hasBlank(status, username)) {
             throw new NullPointerException("参数错误");
         }
-        SysUser user = sysUserService.findByUsername(username);
-        if (user == null) {
-            String error = String.format("根据用户名【%s】没有找到用户", username);
-            log.error(error);
-            throw new UsernameNotFoundException(error);
-        }
+        SysUser user = sysUserService.loadUserByUsername(username);
         String isDelete  = "Y";
         if(isDelete.equals(user.getIsDelete())){
             String error = String.format("该用户【%s】已删除", username);
@@ -161,12 +156,7 @@ public class SysUserController {
         if (StrUtil.hasBlank(oldPassword, newPassword, username)) {
             throw new NullPointerException("参数错误");
         }
-        SysUser user = sysUserService.findByUsername(username);
-        if (user == null) {
-            String error = String.format("根据用户名【%s】没有找到用户", username);
-            log.error(error);
-            throw new UsernameNotFoundException(error);
-        }
+        SysUser user = sysUserService.loadUserByUsername(username);
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             log.error("密码错误");
             throw new RuntimeException("密码错误");
@@ -212,12 +202,7 @@ public class SysUserController {
         if (StrUtil.hasBlank(username)) {
             throw new NullPointerException("参数错误");
         }
-        SysUser user = sysUserService.findByUsername(username);
-        if (user == null) {
-            String error = String.format("根据用户名【%s】没有找到用户", username);
-            log.error(error);
-            throw new UsernameNotFoundException(error);
-        }
+        SysUser user = sysUserService.loadUserByUsername(username);
         String isDelete  = "Y";
         if(isDelete.equals(user.getIsDelete())){
             String error = String.format("该用户【%s】已删除", username);

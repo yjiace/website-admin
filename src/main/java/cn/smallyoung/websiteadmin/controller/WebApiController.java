@@ -23,7 +23,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @ResponseResultBody
-@RequestMapping("/api/web")
+@RequestMapping("/web")
 public class WebApiController {
 
     @Resource
@@ -54,7 +54,8 @@ public class WebApiController {
      * 查询所以的文章列表
      */
     @GetMapping("findAllArticle")
-    public Page<Map<String, Object>> findAllArticle(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
+    public Page<Map<String, Object>> findAllArticle(@RequestParam(defaultValue = "1") Integer page,
+                                                    @RequestParam(defaultValue = "9")Integer size){
         return articleService.findAll(page, size);
     }
 

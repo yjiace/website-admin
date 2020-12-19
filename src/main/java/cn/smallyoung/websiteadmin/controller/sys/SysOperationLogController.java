@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 @Slf4j
 @RestController
 @ResponseResultBody
-@RequestMapping("/api/sys/log")
+@RequestMapping("/sys/log")
 public class SysOperationLogController {
 
 

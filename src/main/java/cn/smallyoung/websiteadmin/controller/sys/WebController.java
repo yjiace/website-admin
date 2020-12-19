@@ -1,11 +1,14 @@
 package cn.smallyoung.websiteadmin.controller.sys;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.EscapeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
 import cn.smallyoung.websiteadmin.service.CategoryService;
+import cn.smallyoung.websiteadmin.vo.ArticleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +28,7 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @ResponseResultBody
-@RequestMapping("/api/sys/web")
+@RequestMapping("/sys/web")
 public class WebController {
 
     @Resource
@@ -65,11 +68,42 @@ public class WebController {
     }
 
     @PostMapping("saveArticle")
-    public Article saveArticle(Article article){
+    public Article saveArticle(ArticleVO articleVO){
+        Article article = new Article();
+        if(StrUtil.isBlank(articleVO.getId())){
+            article.setIsDelete("N");
+            article.setStatus("offline");
+        }else{
+            Optional<Article> optional = articleService.findById(articleVO.getId());
+            if(!optional.isPresent()){
+                throw new NullPointerException("获取文章对象失败");
+            }
+            article = optional.get();
+        }
+        BeanUtil.copyProperties(articleVO, article, CopyOptions.create().setIgnoreNullValue(true));
         if(StrUtil.isBlank(article.getId())){
             article.setIsDelete("N");
         }
         return articleService.save(article);
+    }
+
+    @PostMapping("updateStatus")
+    public void updateStatus(String id, String key, String val){
+        if(id == null || StrUtil.hasBlank(key, val)){
+            throw new NullPointerException("参数错误");
+        }
+        Optional<Article> optional = articleService.findById(id);
+        if(!optional.isPresent()){
+            throw new NullPointerException("获取文章对象失败");
+        }
+        Article article = optional.get();
+        if(key.equals("status")){
+            article.setStatus(val);
+        }
+        if(key.equals("recommend")){
+            article.setRecommend(val);
+        }
+        articleService.save(article);
     }
 
     @DeleteMapping("/deleteArticle")

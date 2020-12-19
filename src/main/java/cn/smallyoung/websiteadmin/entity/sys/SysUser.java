@@ -66,7 +66,6 @@ public class SysUser extends BaseEntity implements Serializable, UserDetails {
     private String status;
 
 
-    @JsonIgnore
     @DataName(name = "角色")
     @Where(clause = " is_delete = 'N' ")
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
