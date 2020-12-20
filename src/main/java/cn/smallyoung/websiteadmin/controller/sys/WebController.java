@@ -74,7 +74,8 @@ public class WebController {
         Article article = new Article();
         if(StrUtil.isBlank(articleVO.getId())){
             article.setIsDelete("N");
-            article.setStatus("offline");
+            article.setStatus("N");
+            article.setRecommend("N");
         }else{
             Optional<Article> optional = articleService.findById(articleVO.getId());
             if(!optional.isPresent()){
@@ -91,7 +92,7 @@ public class WebController {
 
     @PostMapping("updateStatus")
     @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATESTATUS')")
-    public void updateStatus(String id, String key, String val){
+    public Article updateStatus(String id, String key, String val){
         if(id == null || StrUtil.hasBlank(key, val)){
             throw new NullPointerException("参数错误");
         }
@@ -106,7 +107,7 @@ public class WebController {
         if(key.equals("recommend")){
             article.setRecommend(val);
         }
-        articleService.save(article);
+        return articleService.save(article);
     }
 
     @DeleteMapping("/deleteArticle")
@@ -115,7 +116,13 @@ public class WebController {
         if(id == null){
             throw new NullPointerException("参数错误");
         }
-        articleService.delete(id);
+        Optional<Article> optional = articleService.findById(id);
+        if(!optional.isPresent()){
+            throw new NullPointerException("获取文章对象失败");
+        }
+        Article article = optional.get();
+        article.setIsDelete("Y");
+        articleService.save(article);
     }
 
     @PostMapping("updateMd")

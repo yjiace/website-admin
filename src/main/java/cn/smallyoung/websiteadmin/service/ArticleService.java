@@ -81,7 +81,7 @@ public class ArticleService extends BaseService<Article, String> {
         //生成简介、字数统计
         String content = HtmlUtil.cleanHtmlTag(htmlContent);
         if(StrUtil.isBlank(article.getIntroduction())){
-            String introduction = content.substring(0, 125);
+            String introduction = content.substring(0, 50);
             article.setIntroduction(introduction);
         }
         //生成静态文件

@@ -34,7 +34,7 @@ spring:
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    open-in-view: false
+    open-in-view: true
   mvc:
     throw-exception-if-no-handler-found: true
   redis:

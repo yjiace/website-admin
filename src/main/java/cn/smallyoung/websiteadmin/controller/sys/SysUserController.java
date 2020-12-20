@@ -1,11 +1,14 @@
 package cn.smallyoung.websiteadmin.controller.sys;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.sys.SysRole;
 import cn.smallyoung.websiteadmin.entity.sys.SysUser;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.sys.SysRoleService;
 import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.vo.SysUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
@@ -65,7 +68,6 @@ public class SysUserController {
                                  HttpServletRequest request, @RequestParam(defaultValue = "10") Integer limit) {
         Map<String, Object> map = WebUtils.getParametersStartingWith(request, "search_");
         map.put("AND_EQ_isDelete", "N");
-        map.put("AND_EQ_status", "Y");
         return sysUserService.findAll(map,
                 PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
@@ -92,7 +94,7 @@ public class SysUserController {
     @GetMapping("checkUsername")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_SAVE')")
     public boolean checkUsername(String username) {
-        return StrUtil.isNotBlank(username) || sysUserService.findByUsername(username) != null;
+        return StrUtil.isNotBlank(username) && sysUserService.findByUsername(username) != null;
     }
 
     /**
@@ -100,10 +102,18 @@ public class SysUserController {
      */
     @PostMapping(value = "save")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_SAVE')")
-    public SysUser save(SysUser user){
-        user.setStatus("Y");
-        user.setIsDelete("N");
-        user.setPassword(passwordEncoder.encode(defaultPassword));
+    public SysUser save(SysUserVO sysUserVO){
+        if(StrUtil.isBlank(sysUserVO.getUsername())){
+            throw new NullPointerException("参数错误");
+        }
+        SysUser user = sysUserService.findByUsername(sysUserVO.getUsername());
+        if(user == null){
+            user = new SysUser();
+            user.setStatus("Y");
+            user.setIsDelete("N");
+            user.setPassword(passwordEncoder.encode(defaultPassword));
+        }
+        BeanUtil.copyProperties(sysUserVO, user, CopyOptions.create().setIgnoreNullValue(true));
         return sysUserService.save(user);
     }
 
@@ -119,7 +129,7 @@ public class SysUserController {
         if (StrUtil.hasBlank(status, username)) {
             throw new NullPointerException("参数错误");
         }
-        SysUser user = sysUserService.loadUserByUsername(username);
+        SysUser user = sysUserService.findByUsername(username);
         String isDelete  = "Y";
         if(isDelete.equals(user.getIsDelete())){
             String error = String.format("该用户【%s】已删除", username);
@@ -146,23 +156,21 @@ public class SysUserController {
     /**
      * 修改密码
      *
-     * @param username    用户名
      * @param oldPassword 旧密码
      * @param newPassword 新密码
      */
     @PostMapping(value = "updatePassword")
-    @PreAuthorize("authentication.principal.username.equals(#username)")
-    public SysUser updatePassword(String username, String oldPassword, String newPassword) {
-        if (StrUtil.hasBlank(oldPassword, newPassword, username)) {
+    public void updatePassword(String oldPassword, String newPassword) {
+        if (StrUtil.hasBlank(oldPassword, newPassword)) {
             throw new NullPointerException("参数错误");
         }
-        SysUser user = sysUserService.loadUserByUsername(username);
+        SysUser user = sysUserService.loadUserByUsername(sysUserService.currentlyLoggedInUser());
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             log.error("密码错误");
             throw new RuntimeException("密码错误");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
-        return sysUserService.save(user);
+        sysUserService.save(user);
     }
 
     /**

@@ -65,12 +65,18 @@ public class SysUser extends BaseEntity implements Serializable, UserDetails {
     @DataName(name = "状态")
     private String status;
 
-
-    @DataName(name = "角色")
+    @JsonIgnore
     @Where(clause = " is_delete = 'N' ")
-    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @ManyToMany(cascade = CascadeType.REFRESH)
     @JoinTable(name = "t_sys_user_role", joinColumns = {@JoinColumn(name = "username")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private List<SysRole> roles = new ArrayList<>();
+
+    @Transient
+    private List<String> role = new ArrayList<>();
+
+    public List<String> getRole() {
+        return this.roles.stream().map(SysRole::getName).collect(Collectors.toList());
+    }
 
     @Override
     @Transient
