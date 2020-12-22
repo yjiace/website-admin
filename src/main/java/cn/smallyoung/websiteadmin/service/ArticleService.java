@@ -10,7 +10,6 @@ import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import cn.hutool.http.HtmlUtil;
-import cn.hutool.http.HttpRequest;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.ArticleDao;
 import cn.smallyoung.websiteadmin.entity.Article;
@@ -97,11 +96,11 @@ public class ArticleService extends BaseService<Article, String> {
         FileWriter writer = new FileWriter(filePath, "UTF-8");
         writer.write(result);
         articleDao.save(article);
-        if(!haveFile){
-            String url = StrUtil.format(baiduSiteUrl, id);
-            log.info("百度站长API提交新链，请求链接：" + url);
-            log.info("百度站长API提交新链，返回结果：" + HttpRequest.get(url).execute().body());
-        }
+//        if(!haveFile){
+//            String url = StrUtil.format(baiduSiteUrl, id);
+//            log.info("百度站长API提交新链，请求链接：" + url);
+//            log.info("百度站长API提交新链，返回结果：" + HttpRequest.get(url).execute().body());
+//        }
     }
 
 }

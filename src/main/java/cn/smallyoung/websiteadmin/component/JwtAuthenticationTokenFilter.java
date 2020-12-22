@@ -52,7 +52,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     response.setHeader("userId", user.getUsername());
                     if(jwtTokenUtil.canRefresh(authToken)){
-                        response.setHeader(tokenHeader, jwtTokenUtil.refreshToken(authToken));
+                        response.setHeader(tokenHeader, tokenHead + " " + jwtTokenUtil.refreshToken(authToken));
                     }
                 }
             }

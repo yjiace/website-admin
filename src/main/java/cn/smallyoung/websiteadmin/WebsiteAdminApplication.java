@@ -3,6 +3,7 @@ package cn.smallyoung.websiteadmin;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -24,6 +25,8 @@ import javax.servlet.MultipartConfigElement;
 @EnableJpaAuditing(auditorAwareRef = "springSecurityAuditorAware")
 public class WebsiteAdminApplication {
 
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
     @Autowired
     private MultipartConfigElement multipartConfigElement;
 
@@ -45,6 +48,7 @@ public class WebsiteAdminApplication {
         corsConfiguration.addAllowedOrigin("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
+        corsConfiguration.addExposedHeader(tokenHeader);
         corsConfiguration.setMaxAge(3000L);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);

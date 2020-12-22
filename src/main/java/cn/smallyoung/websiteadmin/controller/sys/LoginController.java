@@ -52,6 +52,6 @@ public class LoginController {
         }
         String token = sysUserService.login(username, password);
         log.info("用户【{}】登录系统", username);
-        return Dict.create().set("tokenHead", tokenHead).set("token", token).set("username", username);
+        return Dict.create().set("token", tokenHead + " " + token).set("username", username);
     }
 }
