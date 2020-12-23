@@ -1,14 +1,17 @@
 package cn.smallyoung.websiteadmin.controller.sys;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.sys.SysPermission;
 import cn.smallyoung.websiteadmin.entity.sys.SysRole;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.interfaces.SystemOperationLog;
 import cn.smallyoung.websiteadmin.service.sys.SysPermissionService;
 import cn.smallyoung.websiteadmin.service.sys.SysRoleService;
+import cn.smallyoung.websiteadmin.vo.SysRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -68,24 +71,28 @@ public class SysRoleController {
                 PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
+    @GetMapping(value = "findById")
+    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_FIND')")
+    public SysRole findById(String id){
+        return checkRole(id);
+    }
+
     /**
      * 新增角色
      */
     @PostMapping(value = "save")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_SAVE')")
-    @SystemOperationLog(module = "角色管理", methods = "编辑角色", serviceClass = SysRoleService.class, queryMethod = "findOne",
-            parameterType = "String", parameterKey = "roleVO.id")
-    public SysRole save(SysRole role) {
-        role.setIsDelete("N");
-        return sysRoleService.save(role);
-    }
-
-    /**
-     * 编辑角色
-     */
-    @PostMapping(value = "update")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_SAVE')")
-    public SysRole update(SysRole role) {
+    public SysRole save(SysRoleVO roleVO) {
+        if(StrUtil.hasBlank(roleVO.getName())){
+            throw new NullPointerException("参数错误");
+        }
+        SysRole role = new SysRole();
+        if(StrUtil.isNotBlank(roleVO.getId())){
+            role = checkRole(roleVO.getId());
+        }else{
+            role.setIsDelete("N");
+        }
+        BeanUtil.copyProperties(roleVO, role, CopyOptions.create().setIgnoreNullValue(true));
         return sysRoleService.save(role);
     }
 
@@ -97,8 +104,6 @@ public class SysRoleController {
      */
     @DeleteMapping(value = "delete")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_DELETE')")
-    @SystemOperationLog(module = "角色管理", methods = "删除角色", serviceClass = SysRoleService.class,
-            queryMethod = "findOne", parameterType = "String", parameterKey = "id")
     public SysRole delete(String id) {
         SysRole role = checkRole(id);
         role.setIsDelete("Y");
@@ -106,7 +111,7 @@ public class SysRoleController {
     }
 
     private SysRole checkRole(String id) {
-        if (id == null) {
+        if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");
         }
         Optional<SysRole> optional = sysRoleService.findById(id);

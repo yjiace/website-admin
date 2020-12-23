@@ -81,7 +81,7 @@ public abstract class BaseService<T, ID extends Serializable> {
             try {
                 Field field = fieldOptional.get();
                 field.setAccessible(true);
-                if (field.get(t) == null) {
+                if (field.get(t) == null || field.get(t).toString().equals("")) {
                     field.set(t, IdUtil.objectId());
                 }
             } catch (IllegalAccessException e) {

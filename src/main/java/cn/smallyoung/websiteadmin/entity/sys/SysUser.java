@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 @Setter
 @Entity
 @Table(name = "t_sys_user")
+@Where(clause = " is_delete = 'N' ")
 public class SysUser extends BaseEntity implements Serializable, UserDetails {
 
 

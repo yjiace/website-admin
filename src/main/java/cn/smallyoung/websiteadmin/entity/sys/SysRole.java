@@ -19,6 +19,7 @@ import java.util.List;
 @Setter
 @Entity
 @Table(name = "t_sys_role")
+@Where(clause = " is_delete = 'N' ")
 public class SysRole extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = -2203702702813478824L;

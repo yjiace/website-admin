@@ -44,18 +44,6 @@ public class SysUserController {
     @Resource
     private BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping(value = "findAllUserNames")
-    public Page<String> findAllUserNames(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
-                                          @RequestParam(defaultValue = "10") Integer limit){
-        Map<String, Object> map = WebUtils.getParametersStartingWith(request, "search_");
-        map.put("AND_EQ_isDelete", "N");
-        map.put("AND_EQ_status", "Y");
-        Pageable pageable = PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime"));
-        Page<SysUser> sysUserPage = sysUserService.findAll(map, pageable);
-        List<String> userNames = sysUserPage.getContent().stream().map(SysUser::getUsername).collect(Collectors.toList());
-        return new PageImpl<>(userNames, pageable, sysUserPage.getTotalElements());
-    }
-
     /**
      * 分页查询所有
      *
@@ -67,7 +55,6 @@ public class SysUserController {
     public Page<SysUser> findAll(@RequestParam(defaultValue = "1") Integer page,
                                  HttpServletRequest request, @RequestParam(defaultValue = "10") Integer limit) {
         Map<String, Object> map = WebUtils.getParametersStartingWith(request, "search_");
-        map.put("AND_EQ_isDelete", "N");
         return sysUserService.findAll(map,
                 PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
