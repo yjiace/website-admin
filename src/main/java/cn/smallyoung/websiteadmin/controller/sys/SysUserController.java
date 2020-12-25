@@ -179,9 +179,9 @@ public class SysUserController {
      * @param username 用户名
      * @param roles 角色id集合，逗号分割
      */
-    @PostMapping("updateRole")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_UPDATE_ROLE')")
-    public SysUser updateRole(String username, String roles) {
+    @PostMapping("assignRoles")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_ASSIGN_ROLES')")
+    public SysUser assignRoles(String username, String roles) {
         SysUser user = checkUser(username);
         if (StrUtil.isNotBlank(roles)) {
             List<SysRole> roleList = sysRoleService.findByIdInAndIsDelete(Stream.of(roles.split(","))

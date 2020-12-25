@@ -3,6 +3,7 @@ package cn.smallyoung.websiteadmin.entity.sys;
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +19,7 @@ import java.io.Serializable;
 @Setter
 @Entity
 @Table(name = "t_sys_permission")
+@Where(clause = " is_delete = 'N' ")
 public class SysPermission extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 4357934206294056837L;

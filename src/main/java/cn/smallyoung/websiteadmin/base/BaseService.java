@@ -58,20 +58,8 @@ public abstract class BaseService<T, ID extends Serializable> {
         return baseDao.saveAll(s);
     }
 
-    public void delete(ID id) {
-        baseDao.deleteById(id);
-    }
-
-    public void delete(T t) {
-        baseDao.delete(t);
-    }
-
-    public void delete(Iterable<? extends T> t) {
-        baseDao.deleteAll(t);
-    }
-
-    public void deleteAll() {
-        baseDao.deleteAll();
+    public boolean existsById(ID id){
+        return baseDao.existsById(id);
     }
 
     public void setId(T t) {

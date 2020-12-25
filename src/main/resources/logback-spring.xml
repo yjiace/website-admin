@@ -17,7 +17,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/usr/local/log/info.%d.log</fileNamePattern>
+            <fileNamePattern>log/info.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
     <appender name="fileErrorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -30,7 +30,7 @@
         <!--滚动策略-->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--路径-->
-            <fileNamePattern>/usr/local/log/error.%d.log</fileNamePattern>
+            <fileNamePattern>log/error.%d.log</fileNamePattern>
         </rollingPolicy>
     </appender>
 

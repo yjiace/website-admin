@@ -73,11 +73,13 @@ article:
 aj:
   captcha:
     cache-type: redis
-  type: default
-  water-mark: smallyoung
-  slip-offset: 5
-  interference-options: 2
-  aes-status: true
+    jigsaw: classpath:captcha-img/jigsaw
+    pic-click: classpath:captcha-img/pic-click
+    type: default
+    water-mark: smallyoung
+    slip-offset: 5
+    interference-options: 2
+    aes-status: true
 
 baidu:
   siteUrl: http://data.zz.baidu.com/urls?site=https://smallyoung.cn/article/{}.html&token=123

@@ -3,6 +3,7 @@ package cn.smallyoung.websiteadmin.service;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.lang.Dict;
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.template.Template;
@@ -13,14 +14,19 @@ import cn.hutool.http.HtmlUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.ArticleDao;
 import cn.smallyoung.websiteadmin.entity.Article;
+import cn.smallyoung.websiteadmin.util.UPYunUtil;
+import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,6 +42,8 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ArticleService extends BaseService<Article, String> {
 
+    @Value("${article.img}")
+    private String dirPath;
     @Value("${article.catalog}")
     private String articleCatalog;
     @Value("${baidu.siteUrl}")
@@ -47,7 +55,7 @@ public class ArticleService extends BaseService<Article, String> {
     public Page<Map<String, Object>> findArticle(String category, Integer page, Integer size) {
         Map<String, Object> map = Dict.create().set("AND_INNERJOIN_category-id", category);
         Pageable pageable = PageRequest.of(page - 1, size,
-                Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
+                Sort.by(Sort.Direction.DESC, "weight", "createTime"));
 
         Page<Article> articles = this.findAll(map, pageable);
 
@@ -58,7 +66,7 @@ public class ArticleService extends BaseService<Article, String> {
 
     public Page<Map<String, Object>> findAll(Integer page, Integer size) {
         Pageable pageable = PageRequest.of(page - 1, size,
-                Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
+                Sort.by(Sort.Direction.DESC, "weight", "createTime"));
         Page<Article> articles = this.findAll(Dict.create().set("AND_EQ_status", "Y"), pageable);
 
         return new PageImpl<>(articles.getContent().stream()
@@ -68,7 +76,7 @@ public class ArticleService extends BaseService<Article, String> {
 
     public List<Map<String, Object>> findRecommendArticle() {
         List<Article> list = this.findAll(Dict.create().set("AND_EQ_status", "Y").set("AND_EQ_recommend", "Y"),
-                Sort.by(Sort.Direction.DESC, "weight", "updateTime"));
+                Sort.by(Sort.Direction.DESC, "weight", "createTime"));
         return list.stream().map(Article::toMap).collect(Collectors.toList());
     }
 
@@ -101,6 +109,26 @@ public class ArticleService extends BaseService<Article, String> {
 //            log.info("百度站长API提交新链，请求链接：" + url);
 //            log.info("百度站长API提交新链，返回结果：" + HttpRequest.get(url).execute().body());
 //        }
+    }
+
+    public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
+        if(file == null || file.isEmpty()){
+            throw new NullPointerException("参数错误");
+        }
+        String fileName = file.getOriginalFilename();
+        if(StrUtil.isBlank(fileName)){
+            throw new NullPointerException("参数错误");
+        }
+        //重命名图片地址
+        String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
+        String localFileName = IdUtil.simpleUUID() + fileSuffix;
+        String filePath = dirPath + File.separator + path + File.separator + localFileName;
+        FileUtil.touch(filePath);
+        FileWriter writer = new FileWriter(filePath, "UTF-8");
+        writer.writeFromStream(file.getInputStream());
+        //上传到又拍云
+        Response response = UPYunUtil.writeFile(path + localFileName, writer.getFile(), null);
+        return response.isSuccessful() ? path + localFileName : "";
     }
 
 }

@@ -110,6 +110,18 @@ public class SysRoleController {
         return sysRoleService.save(role);
     }
 
+    @PostMapping("grantPermissions")
+    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
+    public void grantPermissions(String id, List<String> ids){
+        if (StrUtil.isBlank(id)) {
+            throw new NullPointerException("参数错误");
+        }
+        SysRole role = checkRole(id);
+        List<SysPermission> permissions = sysPermissionService.findByIdInAndIsDelete(ids);
+        role.setSysPermissions(permissions);
+        sysRoleService.save(role);
+    }
+
     private SysRole checkRole(String id) {
         if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");
