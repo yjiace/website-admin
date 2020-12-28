@@ -25,6 +25,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author smallyoung
@@ -110,12 +111,26 @@ public class SysRoleController {
         return sysRoleService.save(role);
     }
 
+    @GetMapping(value = "findPermissionsTree")
+    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
+    public List<Tree<String>> findPermissionsTree(String id) {
+        SysRole role = checkRole(id);
+        List<String> permissions = role.getSysPermissions().stream().map(SysPermission::getId).collect(Collectors.toList());
+        List<SysPermission> sysPermissions = sysPermissionService.findAll(Sort.by(Sort.Direction.DESC, "orderNumber", "updateTime"));
+
+        return TreeUtil.build(sysPermissions, "0", new TreeNodeConfig(),
+                (treeNode, tree) -> {
+                    tree.setId(treeNode.getId());
+                    tree.setParentId(treeNode.getParentId());
+                    tree.setName(treeNode.getName());
+                    tree.putExtra("val", treeNode.getVal());
+                    tree.putExtra("checked", permissions.contains(treeNode.getId()));
+                });
+    }
+
     @PostMapping("grantPermissions")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
     public void grantPermissions(String id, List<String> ids){
-        if (StrUtil.isBlank(id)) {
-            throw new NullPointerException("参数错误");
-        }
         SysRole role = checkRole(id);
         List<SysPermission> permissions = sysPermissionService.findByIdInAndIsDelete(ids);
         role.setSysPermissions(permissions);

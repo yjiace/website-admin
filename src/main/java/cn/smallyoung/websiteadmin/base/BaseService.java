@@ -40,6 +40,10 @@ public abstract class BaseService<T, ID extends Serializable> {
         return baseDao.findAll(new SimpleSpecificationBuilder<T>(map).getSpecification(), sort);
     }
 
+    public List<T> findAll(Sort sort) {
+        return baseDao.findAll(sort);
+    }
+
     public Page<T> findAll(Pageable pageable) {
         return baseDao.findAll(pageable);
     }
