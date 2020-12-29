@@ -74,11 +74,18 @@ public class SysUser extends BaseEntity implements Serializable, UserDetails {
     @Override
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.getRoles().stream()
-                .map(SysRole::getSysPermissions)
-                .flatMap(Collection::stream)
-                .filter(p -> "N".equals(p.getIsDelete()))
-                .map(SysPermission::getVal).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+        List<SimpleGrantedAuthority> list = new ArrayList<>();
+        if(this.roles == null || this.roles.size() == 0){
+            return list;
+        }
+        for(SysRole role : this.roles){
+            if(role.getSysPermissions() != null && role.getSysPermissions().size() > 0){
+                list.addAll(role.getSysPermissions()
+                        .stream().map(SysPermission::getVal).map(SimpleGrantedAuthority::new)
+                        .collect(Collectors.toList()));
+            }
+        }
+        return list;
     }
 
     /**

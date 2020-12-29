@@ -2,6 +2,7 @@ package cn.smallyoung.websiteadmin.controller.sys;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.sys.SysRole;
 import cn.smallyoung.websiteadmin.entity.sys.SysUser;
@@ -89,12 +90,12 @@ public class SysUserController {
      */
     @PostMapping(value = "save")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_SAVE')")
-    public SysUser save(SysUserVO sysUserVO){
-        if(StrUtil.isBlank(sysUserVO.getUsername())){
+    public SysUser save(SysUserVO sysUserVO) {
+        if (StrUtil.isBlank(sysUserVO.getUsername())) {
             throw new NullPointerException("参数错误");
         }
         SysUser user = sysUserService.findByUsername(sysUserVO.getUsername());
-        if(user == null){
+        if (user == null) {
             user = new SysUser();
             user.setStatus("Y");
             user.setIsDelete("N");
@@ -108,7 +109,7 @@ public class SysUserController {
      * 更改用户状态
      *
      * @param username 用户名
-     * @param status 需要更改用户的状态：Y，启用；N，禁用
+     * @param status   需要更改用户的状态：Y，启用；N，禁用
      */
     @PostMapping(value = "updateStatus")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_UPDATE_STATUS')")
@@ -117,8 +118,8 @@ public class SysUserController {
             throw new NullPointerException("参数错误");
         }
         SysUser user = sysUserService.findByUsername(username);
-        String isDelete  = "Y";
-        if(isDelete.equals(user.getIsDelete())){
+        String isDelete = "Y";
+        if (isDelete.equals(user.getIsDelete())) {
             String error = String.format("该用户【%s】已删除", username);
             log.error(error);
             throw new RuntimeException(error);
@@ -173,11 +174,20 @@ public class SysUserController {
         return sysUserService.save(user);
     }
 
+    @GetMapping(value = "findRolesList")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_ASSIGN_ROLES')")
+    public Dict findList(String username) {
+        SysUser user = checkUser(username);
+        List<SysRole> roleList = sysRoleService.findAll(Sort.by(Sort.Direction.DESC, "updateTime"));
+        return Dict.create().set("have", user.getRoles().stream().map(SysRole::getId).collect(Collectors.toList()))
+                .set("all", roleList.stream().map(r -> Dict.create().set("value", r.getId()).set("title", r.getName())).collect(Collectors.toList()));
+    }
+
     /**
      * 设置用户角色
      *
      * @param username 用户名
-     * @param roles 角色id集合，逗号分割
+     * @param roles    角色id集合，逗号分割
      */
     @PostMapping("assignRoles")
     @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_ASSIGN_ROLES')")
@@ -198,8 +208,8 @@ public class SysUserController {
             throw new NullPointerException("参数错误");
         }
         SysUser user = sysUserService.loadUserByUsername(username);
-        String isDelete  = "Y";
-        if(isDelete.equals(user.getIsDelete())){
+        String isDelete = "Y";
+        if (isDelete.equals(user.getIsDelete())) {
             String error = String.format("该用户【%s】已删除", username);
             log.error(error);
             throw new UsernameNotFoundException(error);

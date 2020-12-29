@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author smallyoung
@@ -41,22 +42,6 @@ public class SysRoleController {
     private SysRoleService sysRoleService;
     @Resource
     private SysPermissionService sysPermissionService;
-
-    /**
-     * 查询所有权限
-     */
-    @GetMapping(value = "findAllPermission")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_SAVE')")
-    public List<Tree<String>> findAllPermission(HttpServletRequest request) {
-        List<SysPermission> sysPermissions = sysPermissionService.findAll(WebUtils.getParametersStartingWith(request, "search_"));
-        return TreeUtil.build(sysPermissions, "0", new TreeNodeConfig(),
-                (treeNode, tree) -> {
-                    tree.setId(treeNode.getId());
-                    tree.setParentId(treeNode.getParentId());
-                    tree.setName(treeNode.getName());
-                    tree.putExtra("val", treeNode.getVal());
-                });
-    }
 
     /**
      * 分页查询所有
@@ -130,9 +115,12 @@ public class SysRoleController {
 
     @PostMapping("grantPermissions")
     @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
-    public void grantPermissions(String id, List<String> ids){
+    public void grantPermissions(String id, String permissionIds){
         SysRole role = checkRole(id);
-        List<SysPermission> permissions = sysPermissionService.findByIdInAndIsDelete(ids);
+        List<SysPermission> permissions = null;
+        if(StrUtil.isNotBlank(permissionIds)){
+            permissions = sysPermissionService.findByIdInAndIsDelete(Stream.of(permissionIds.split(",")).map(String::trim).collect(Collectors.toList()));
+        }
         role.setSysPermissions(permissions);
         sysRoleService.save(role);
     }
