@@ -106,7 +106,7 @@ public class ArticleController {
             }
             article = optional.get();
         }
-        BeanUtil.copyProperties(articleVO, article, CopyOptions.create().setIgnoreNullValue(true));
+        BeanUtil.copyProperties(articleVO, article);
         if(StrUtil.isBlank(article.getId())){
             article.setIsDelete("N");
         }

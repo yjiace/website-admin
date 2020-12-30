@@ -1,7 +1,6 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
@@ -78,7 +77,7 @@ public class SysRoleController {
         }else{
             role.setIsDelete("N");
         }
-        BeanUtil.copyProperties(roleVO, role, CopyOptions.create().setIgnoreNullValue(true));
+        BeanUtil.copyProperties(roleVO, role);
         return sysRoleService.save(role);
     }
 

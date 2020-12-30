@@ -1,7 +1,6 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.SysRole;
@@ -12,7 +11,9 @@ import cn.smallyoung.websiteadmin.service.SysUserService;
 import cn.smallyoung.websiteadmin.vo.SysUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -101,7 +102,7 @@ public class SysUserController {
             user.setIsDelete("N");
             user.setPassword(passwordEncoder.encode(defaultPassword));
         }
-        BeanUtil.copyProperties(sysUserVO, user, CopyOptions.create().setIgnoreNullValue(true));
+        BeanUtil.copyProperties(sysUserVO, user);
         return sysUserService.save(user);
     }
 

@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
+import cn.smallyoung.websiteadmin.service.SysPermissionService;
 import cn.smallyoung.websiteadmin.service.SysUserService;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
@@ -31,6 +32,8 @@ public class LoginController {
     private CaptchaService captchaService;
     @Resource
     private SysUserService sysUserService;
+    @Resource
+    private SysPermissionService sysPermissionService;
 
     /**
      * 登录
@@ -55,6 +58,6 @@ public class LoginController {
         String token = sysUserService.login(sysUser, password);
         log.info("用户【{}】登录系统", username);
         return Dict.create().set("token", tokenHead + " " + token)
-                .set("username", username).set("permissions", sysUser.getAllPermission());
+                .set("username", username).set("permissions", sysPermissionService.toTree(sysUser.getAllPermission()));
     }
 }

@@ -1,10 +1,7 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.tree.Tree;
-import cn.hutool.core.lang.tree.TreeNodeConfig;
-import cn.hutool.core.lang.tree.TreeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.SysPermission;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
@@ -45,20 +42,7 @@ public class SysPermissionController {
     public List<Tree<String>> findAll(HttpServletRequest request) {
         List<SysPermission> sysPermissions = sysPermissionService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
                 Sort.by(Sort.Direction.DESC, "updateTime"));
-
-        return TreeUtil.build(sysPermissions, "0", new TreeNodeConfig(),
-                (treeNode, tree) -> {
-                    tree.setId(treeNode.getId());
-                    tree.setParentId(treeNode.getParentId());
-                    tree.setName(treeNode.getName());
-                    tree.putExtra("val", treeNode.getVal());
-                    tree.putExtra("jumpPath", treeNode.getJumpPath());
-                    tree.putExtra("requestPath", treeNode.getRequestPath());
-                    tree.putExtra("icon", treeNode.getIcon());
-                    tree.putExtra("orderNumber", treeNode.getOrderNumber());
-                    tree.putExtra("type", treeNode.getType());
-                    tree.putExtra("updateTime", treeNode.getUpdateTime());
-                });
+        return sysPermissionService.toTree(sysPermissions);
     }
 
     /**
@@ -99,7 +83,7 @@ public class SysPermissionController {
         }else{
             sysPermission.setIsDelete("N");
         }
-        BeanUtil.copyProperties(sysPermissionVO, sysPermission, CopyOptions.create().setIgnoreNullValue(true));
+        BeanUtil.copyProperties(sysPermissionVO, sysPermission);
         return sysPermissionService.save(sysPermission);
     }
 
