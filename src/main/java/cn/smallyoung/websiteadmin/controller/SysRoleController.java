@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
@@ -6,11 +6,11 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.smallyoung.websiteadmin.entity.sys.SysPermission;
-import cn.smallyoung.websiteadmin.entity.sys.SysRole;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
+import cn.smallyoung.websiteadmin.entity.SysRole;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.service.sys.SysPermissionService;
-import cn.smallyoung.websiteadmin.service.sys.SysRoleService;
+import cn.smallyoung.websiteadmin.service.SysPermissionService;
+import cn.smallyoung.websiteadmin.service.SysRoleService;
 import cn.smallyoung.websiteadmin.vo.SysRoleVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -50,7 +50,7 @@ public class SysRoleController {
      * @param limit 页数
      */
     @GetMapping(value = "findAll")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_FIND')")
+    @PreAuthorize("hasRole('ROLE_ROLE')")
     public Page<SysRole> findAll(@RequestParam(defaultValue = "1") Integer page,
                                  HttpServletRequest request, @RequestParam(defaultValue = "10") Integer limit) {
         return sysRoleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
@@ -58,7 +58,7 @@ public class SysRoleController {
     }
 
     @GetMapping(value = "findById")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_FIND')")
+    @PreAuthorize("hasRole('ROLE_ROLE_SAVE')")
     public SysRole findById(String id){
         return checkRole(id);
     }
@@ -67,7 +67,7 @@ public class SysRoleController {
      * 新增角色
      */
     @PostMapping(value = "save")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_SAVE')")
+    @PreAuthorize("hasRole('ROLE_ROLE_SAVE')")
     public SysRole save(SysRoleVO roleVO) {
         if(StrUtil.hasBlank(roleVO.getName())){
             throw new NullPointerException("参数错误");
@@ -89,7 +89,7 @@ public class SysRoleController {
      * @return ResultMap封装好的返回数据
      */
     @DeleteMapping(value = "delete")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_DELETE')")
+    @PreAuthorize("hasRole('ROLE_ROLE_DEL')")
     public SysRole delete(String id) {
         SysRole role = checkRole(id);
         role.setIsDelete("Y");
@@ -97,7 +97,7 @@ public class SysRoleController {
     }
 
     @GetMapping(value = "findPermissionsTree")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
+    @PreAuthorize("hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
     public List<Tree<String>> findPermissionsTree(String id) {
         SysRole role = checkRole(id);
         List<String> permissions = role.getSysPermissions().stream().map(SysPermission::getId).collect(Collectors.toList());
@@ -114,7 +114,7 @@ public class SysRoleController {
     }
 
     @PostMapping("grantPermissions")
-    @PreAuthorize("hasRole('ROLE_ROLE') or hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
+    @PreAuthorize("hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
     public void grantPermissions(String id, String permissionIds){
         SysRole role = checkRole(id);
         List<SysPermission> permissions = null;

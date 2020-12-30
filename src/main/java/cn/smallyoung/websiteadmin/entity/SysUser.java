@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.entity.sys;
+package cn.smallyoung.websiteadmin.entity;
 
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import cn.smallyoung.websiteadmin.interfaces.DataName;
@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -74,18 +75,19 @@ public class SysUser extends BaseEntity implements Serializable, UserDetails {
     @Override
     @Transient
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<SimpleGrantedAuthority> list = new ArrayList<>();
+        List<SysPermission> list = getAllPermission();
+        if(list == null || list.size() == 0){
+            return new ArrayList<>();
+        }
+        return list.stream().map(SysPermission::getVal).map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    public List<SysPermission> getAllPermission(){
         if(this.roles == null || this.roles.size() == 0){
-            return list;
+            return new ArrayList<>();
         }
-        for(SysRole role : this.roles){
-            if(role.getSysPermissions() != null && role.getSysPermissions().size() > 0){
-                list.addAll(role.getSysPermissions()
-                        .stream().map(SysPermission::getVal).map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList()));
-            }
-        }
-        return list;
+        return this.roles.stream().flatMap(r -> r.getSysPermissions().stream()).filter(Objects::nonNull).collect(Collectors.toList());
     }
 
     /**

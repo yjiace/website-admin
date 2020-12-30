@@ -2,7 +2,7 @@ package cn.smallyoung.websiteadmin.interfaces;
 
 
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.entity.sys.SysOperationLogWayEnum;
+import cn.smallyoung.websiteadmin.entity.SysOperationLogWayEnum;
 
 import java.lang.annotation.*;
 

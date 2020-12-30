@@ -1,10 +1,10 @@
-package cn.smallyoung.websiteadmin.service.sys;
+package cn.smallyoung.websiteadmin.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.dao.sys.SysUserDao;
-import cn.smallyoung.websiteadmin.entity.sys.SysUser;
+import cn.smallyoung.websiteadmin.dao.SysUserDao;
+import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -54,14 +54,13 @@ public class SysUserService extends BaseService<SysUser, String> implements User
     /**
      * 登录
      *
-     * @param username 用户名
+     * @param sysUser 用户
      * @param password 密码
      * @return token
      */
-    public String login(String username, String password) {
-        SysUser sysUser = loadUserByUsername(username);
+    public String login(SysUser sysUser, String password) {
         if (!passwordEncoder.matches(password, sysUser.getPassword())) {
-            log.error("用户【{}】登录系统，密码【{}】错误", username, password);
+            log.error("用户【{}】登录系统，密码【{}】错误", sysUser.getUsername(), password);
             throw new BadCredentialsException("密码不正确");
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sysUser, null, sysUser.getAuthorities());

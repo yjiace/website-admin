@@ -1,9 +1,9 @@
-package cn.smallyoung.websiteadmin.service.sys;
+package cn.smallyoung.websiteadmin.service;
 
 
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.dao.sys.MessageNotificationDao;
-import cn.smallyoung.websiteadmin.entity.sys.MessageNotification;
+import cn.smallyoung.websiteadmin.dao.MessageNotificationDao;
+import cn.smallyoung.websiteadmin.entity.MessageNotification;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.entity.sys;
+package cn.smallyoung.websiteadmin.entity;
 
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import cn.smallyoung.websiteadmin.interfaces.DataName;

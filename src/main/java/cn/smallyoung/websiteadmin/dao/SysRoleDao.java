@@ -1,7 +1,7 @@
-package cn.smallyoung.websiteadmin.dao.sys;
+package cn.smallyoung.websiteadmin.dao;
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
-import cn.smallyoung.websiteadmin.entity.sys.SysRole;
+import cn.smallyoung.websiteadmin.entity.SysRole;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 

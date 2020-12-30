@@ -1,14 +1,14 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
-import cn.smallyoung.websiteadmin.entity.sys.SysRole;
-import cn.smallyoung.websiteadmin.entity.sys.SysUser;
+import cn.smallyoung.websiteadmin.entity.SysRole;
+import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.service.sys.SysRoleService;
-import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.service.SysRoleService;
+import cn.smallyoung.websiteadmin.service.SysUserService;
 import cn.smallyoung.websiteadmin.vo.SysUserVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,7 +52,7 @@ public class SysUserController {
      * @param limit 页数
      */
     @GetMapping(value = "findAll")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_FIND')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER')")
     public Page<SysUser> findAll(@RequestParam(defaultValue = "1") Integer page,
                                  HttpServletRequest request, @RequestParam(defaultValue = "10") Integer limit) {
         Map<String, Object> map = WebUtils.getParametersStartingWith(request, "search_");
@@ -66,7 +66,7 @@ public class SysUserController {
      * @param username 用户名
      */
     @GetMapping(value = "findByUsername")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_FIND') or authentication.principal.username.equals(#username)")
+    @PreAuthorize("hasRole('ROLE_SYSUSER') or authentication.principal.username.equals(#username)")
     public SysUser findById(String username) {
         if (StrUtil.hasBlank(username)) {
             username = sysUserService.currentlyLoggedInUser();
@@ -80,7 +80,7 @@ public class SysUserController {
      * @param username 用户名
      */
     @GetMapping("checkUsername")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_SAVE')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_SAVE')")
     public boolean checkUsername(String username) {
         return StrUtil.isNotBlank(username) && sysUserService.findByUsername(username) != null;
     }
@@ -89,7 +89,7 @@ public class SysUserController {
      * 保存用户
      */
     @PostMapping(value = "save")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_SAVE')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_SAVE')")
     public SysUser save(SysUserVO sysUserVO) {
         if (StrUtil.isBlank(sysUserVO.getUsername())) {
             throw new NullPointerException("参数错误");
@@ -112,7 +112,7 @@ public class SysUserController {
      * @param status   需要更改用户的状态：Y，启用；N，禁用
      */
     @PostMapping(value = "updateStatus")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_UPDATE_STATUS')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_UPDATE_STATUS')")
     public SysUser updateStatus(String username, String status) {
         if (StrUtil.hasBlank(status, username)) {
             throw new NullPointerException("参数错误");
@@ -134,7 +134,7 @@ public class SysUserController {
      * @param username 用户名
      */
     @PostMapping(value = "resetPassword")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_RESET_PASSWORD')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_RESET_PASSWORD')")
     public SysUser resetPassword(String username) {
         SysUser user = checkUser(username);
         user.setPassword(passwordEncoder.encode(defaultPassword));
@@ -167,15 +167,15 @@ public class SysUserController {
      * @param username 用户名
      */
     @DeleteMapping(value = "delete")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_DELETE')")
-    public SysUser deleteUser(String username) {
+    @PreAuthorize("hasRole('ROLE_SYSUSER_DEL')")
+    public SysUser delete(String username) {
         SysUser user = checkUser(username);
         user.setIsDelete("Y");
         return sysUserService.save(user);
     }
 
     @GetMapping(value = "findRolesList")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_ASSIGN_ROLES')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_ASSIGN_ROLES')")
     public Dict findList(String username) {
         SysUser user = checkUser(username);
         List<SysRole> roleList = sysRoleService.findAll(Sort.by(Sort.Direction.DESC, "updateTime"));
@@ -190,7 +190,7 @@ public class SysUserController {
      * @param roles    角色id集合，逗号分割
      */
     @PostMapping("assignRoles")
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_USER_ASSIGN_ROLES')")
+    @PreAuthorize("hasRole('ROLE_SYSUSER_ASSIGN_ROLES')")
     public SysUser assignRoles(String username, String roles) {
         SysUser user = checkUser(username);
         if (StrUtil.isNotBlank(roles)) {

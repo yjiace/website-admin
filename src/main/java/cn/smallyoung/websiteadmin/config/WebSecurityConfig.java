@@ -3,7 +3,7 @@ package cn.smallyoung.websiteadmin.config;
 import cn.smallyoung.websiteadmin.component.JwtAuthenticationTokenFilter;
 import cn.smallyoung.websiteadmin.component.RestAuthenticationEntryPoint;
 import cn.smallyoung.websiteadmin.component.RestfulAccessDeniedHandler;
-import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.service.SysUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;

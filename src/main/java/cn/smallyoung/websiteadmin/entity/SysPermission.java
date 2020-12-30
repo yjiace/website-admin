@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.entity.sys;
+package cn.smallyoung.websiteadmin.entity;
 
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import lombok.Getter;
@@ -44,10 +44,16 @@ public class SysPermission extends BaseEntity implements Serializable {
     private String val;
 
     /**
-     * 权限路径
+     * 跳转路径
      */
-    @Column(name = "url" )
-    private String url;
+    @Column(name = "jump_path")
+    private String jumpPath;
+
+    /**
+     * 请求路径
+     */
+    @Column(name = "request_path")
+    private String requestPath;
 
     /**
      * 图标

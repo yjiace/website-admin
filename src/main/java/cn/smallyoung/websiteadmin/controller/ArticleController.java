@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
@@ -31,35 +31,22 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @ResponseResultBody
-@RequestMapping("/sys/web")
-public class WebController {
+@RequestMapping("/sys/article")
+public class ArticleController {
 
     @Resource
     private ArticleService articleService;
 
-    @GetMapping("findAllArticle")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_FIND')")
+    @GetMapping("findAll")
+    @PreAuthorize("hasRole('ROLE_ARTICLE')")
     public Page<Article> findAllArticle(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
                                  @RequestParam(defaultValue = "9")Integer size){
         return articleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
                 PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
-    @GetMapping("getMdContentById")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
-    public String getMdContentById(String id){
-        if(id == null){
-            throw new NullPointerException("参数错误");
-        }
-        Optional<Article> article = articleService.findById(id);
-        if(article.isPresent()){
-            return EscapeUtil.escape(article.get().getMdContent());
-        }
-        throw new NullPointerException("获取文章对象失败");
-    }
-
-    @GetMapping("/findArticle")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_FIND')")
+    @GetMapping("/findById")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
     public Article getArticle(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
@@ -71,8 +58,41 @@ public class WebController {
         throw new NullPointerException("获取文章对象失败");
     }
 
-    @PostMapping("saveArticle")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_SAVE')")
+    @GetMapping("getMdContentById")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
+    public String getMdContentById(String id){
+        if(id == null){
+            throw new NullPointerException("参数错误");
+        }
+        Optional<Article> article = articleService.findById(id);
+        if(article.isPresent()){
+            return EscapeUtil.escape(article.get().getMdContent());
+        }
+        throw new NullPointerException("获取文章对象失败");
+    }
+
+
+    @PostMapping("updateMd")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
+    public void updateMd(String id, String mdContent, String htmlContent){
+        articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent);
+    }
+
+
+    @PostMapping("uploadImg/{path}")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
+    public String uploadImg(MultipartFile file, @PathVariable String path) throws IOException, UpException {
+        return articleService.uploadImg(file, "/article/" + path + "/");
+    }
+
+    @PostMapping("uploadCover")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
+    public String uploadCover(MultipartFile file) throws IOException, UpException {
+        return articleService.uploadImg(file, "/article/cover/");
+    }
+
+    @PostMapping("save")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
     public Article saveArticle(ArticleVO articleVO) {
         Article article = new Article();
         if(StrUtil.isBlank(articleVO.getId())){
@@ -94,7 +114,7 @@ public class WebController {
     }
 
     @PostMapping("updateStatus")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATESTATUS')")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATESTATUS')")
     public Article updateStatus(String id, String key, String val){
         if(id == null || StrUtil.hasBlank(key, val)){
             throw new NullPointerException("参数错误");
@@ -113,9 +133,9 @@ public class WebController {
         return articleService.save(article);
     }
 
-    @DeleteMapping("/deleteArticle")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_DEL')")
-    public void deleteArticle(String id){
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_DEL')")
+    public void delete(String id){
         if(id == null){
             throw new NullPointerException("参数错误");
         }
@@ -126,23 +146,5 @@ public class WebController {
         Article article = optional.get();
         article.setIsDelete("Y");
         articleService.save(article);
-    }
-
-    @PostMapping("updateMd")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
-    public void updateMd(String id, String mdContent, String htmlContent){
-        articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent);
-    }
-
-    @PostMapping("uploadImg/{path}")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
-    public String uploadImg(MultipartFile file, @PathVariable String path) throws IOException, UpException {
-        return articleService.uploadImg(file, "/article/" + path + "/");
-    }
-
-    @PostMapping("uploadCover")
-    @PreAuthorize("hasRole('ROLE_ARTICLE') or hasRole('ROLE_ARTICLE_SAVE')")
-    public String uploadCover(MultipartFile file) throws IOException, UpException {
-        return articleService.uploadImg(file, "/article/cover/");
     }
 }

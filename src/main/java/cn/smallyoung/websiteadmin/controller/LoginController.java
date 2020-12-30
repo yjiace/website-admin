@@ -1,9 +1,10 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
+import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.service.SysUserService;
 import com.anji.captcha.model.common.ResponseModel;
 import com.anji.captcha.model.vo.CaptchaVO;
 import com.anji.captcha.service.CaptchaService;
@@ -50,8 +51,10 @@ public class LoginController {
             log.error("用户【{}】登录系统，验证码【{}】错误，{}", username, captchaVerification, responseModel);
             throw new NullPointerException(responseModel.getRepMsg());
         }
-        String token = sysUserService.login(username, password);
+        SysUser sysUser = sysUserService.loadUserByUsername(username);
+        String token = sysUserService.login(sysUser, password);
         log.info("用户【{}】登录系统", username);
-        return Dict.create().set("token", tokenHead + " " + token).set("username", username);
+        return Dict.create().set("token", tokenHead + " " + token)
+                .set("username", username).set("permissions", sysUser.getAllPermission());
     }
 }

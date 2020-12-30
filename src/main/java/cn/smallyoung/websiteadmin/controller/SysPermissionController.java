@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
@@ -6,9 +6,9 @@ import cn.hutool.core.lang.tree.Tree;
 import cn.hutool.core.lang.tree.TreeNodeConfig;
 import cn.hutool.core.lang.tree.TreeUtil;
 import cn.hutool.core.util.StrUtil;
-import cn.smallyoung.websiteadmin.entity.sys.SysPermission;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.service.sys.SysPermissionService;
+import cn.smallyoung.websiteadmin.service.SysPermissionService;
 import cn.smallyoung.websiteadmin.vo.SysPermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,10 +38,10 @@ public class SysPermissionController {
     private SysPermissionService sysPermissionService;
 
     /**
-     * 分页查询所有
+     * 查询所有
      */
     @GetMapping(value = "findTree")
-    @PreAuthorize("hasRole('ROLE_PERMISSION') or hasRole('ROLE_PERMISSION_FIND')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION')")
     public List<Tree<String>> findAll(HttpServletRequest request) {
         List<SysPermission> sysPermissions = sysPermissionService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
                 Sort.by(Sort.Direction.DESC, "updateTime"));
@@ -52,7 +52,8 @@ public class SysPermissionController {
                     tree.setParentId(treeNode.getParentId());
                     tree.setName(treeNode.getName());
                     tree.putExtra("val", treeNode.getVal());
-                    tree.putExtra("url", treeNode.getUrl());
+                    tree.putExtra("jumpPath", treeNode.getJumpPath());
+                    tree.putExtra("requestPath", treeNode.getRequestPath());
                     tree.putExtra("icon", treeNode.getIcon());
                     tree.putExtra("orderNumber", treeNode.getOrderNumber());
                     tree.putExtra("type", treeNode.getType());
@@ -67,7 +68,7 @@ public class SysPermissionController {
      * @param limit 页数
      */
     @GetMapping(value = "findAll")
-    @PreAuthorize("hasRole('ROLE_PERMISSION') or hasRole('ROLE_PERMISSION_FIND')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION')")
     public Page<SysPermission> findAll(@RequestParam(defaultValue = "1") Integer page,
                                        HttpServletRequest request, @RequestParam(defaultValue = "10") Integer limit) {
         return sysPermissionService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
@@ -75,13 +76,13 @@ public class SysPermissionController {
     }
 
     @GetMapping(value = "findById")
-    @PreAuthorize("hasRole('ROLE_PERMISSION') or hasRole('ROLE_PERMISSION_FIND')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION_SAVE')")
     public SysPermission findById(String id){
         return sysPermissionService.findById(id).orElse(null);
     }
 
     @PostMapping("save")
-    @PreAuthorize("hasRole('ROLE_PERMISSION') or hasRole('ROLE_PERMISSION_SAVE')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION_SAVE')")
     public SysPermission save(SysPermissionVO sysPermissionVO){
         if(StrUtil.hasBlank(sysPermissionVO.getName())){
             throw new NullPointerException("参数错误");
@@ -103,7 +104,7 @@ public class SysPermissionController {
     }
 
     @DeleteMapping("delete")
-    @PreAuthorize("hasRole('ROLE_PERMISSION') or hasRole('ROLE_PERMISSION_DELETE')")
+    @PreAuthorize("hasRole('ROLE_PERMISSION_DEL')")
     public void delete(String id){
         if(StrUtil.hasBlank(id)){
             throw new NullPointerException("参数错误");

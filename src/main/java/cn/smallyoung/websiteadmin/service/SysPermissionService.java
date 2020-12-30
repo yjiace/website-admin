@@ -1,8 +1,8 @@
-package cn.smallyoung.websiteadmin.service.sys;
+package cn.smallyoung.websiteadmin.service;
 
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.dao.sys.SysPermissionDao;
-import cn.smallyoung.websiteadmin.entity.sys.SysPermission;
+import cn.smallyoung.websiteadmin.dao.SysPermissionDao;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

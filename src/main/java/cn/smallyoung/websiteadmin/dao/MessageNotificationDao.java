@@ -1,8 +1,8 @@
-package cn.smallyoung.websiteadmin.dao.sys;
+package cn.smallyoung.websiteadmin.dao;
 
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
-import cn.smallyoung.websiteadmin.entity.sys.MessageNotification;
+import cn.smallyoung.websiteadmin.entity.MessageNotification;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 

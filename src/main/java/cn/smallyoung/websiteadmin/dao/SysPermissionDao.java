@@ -1,7 +1,7 @@
-package cn.smallyoung.websiteadmin.dao.sys;
+package cn.smallyoung.websiteadmin.dao;
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
-import cn.smallyoung.websiteadmin.entity.sys.SysPermission;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
 
 import java.util.List;
 

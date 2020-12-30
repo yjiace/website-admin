@@ -32,9 +32,14 @@ public class SysPermissionVO implements Serializable {
     private String val;
 
     /**
-     * 权限路径
+     * 跳转路径
      */
-    private String url;
+    private String jumpPath;
+
+    /**
+     * 请求路径
+     */
+    private String requestPath;
 
     /**
      * 图标

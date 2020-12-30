@@ -1,7 +1,7 @@
-package cn.smallyoung.websiteadmin.dao.sys;
+package cn.smallyoung.websiteadmin.dao;
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
-import cn.smallyoung.websiteadmin.entity.sys.SysOperationLog;
+import cn.smallyoung.websiteadmin.entity.SysOperationLog;
 
 /**
  * @author smallyoung

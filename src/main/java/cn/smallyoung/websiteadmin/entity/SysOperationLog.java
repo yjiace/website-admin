@@ -1,4 +1,4 @@
-package cn.smallyoung.websiteadmin.entity.sys;
+package cn.smallyoung.websiteadmin.entity;
 
 import lombok.Getter;
 import lombok.Setter;

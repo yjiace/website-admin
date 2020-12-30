@@ -1,10 +1,10 @@
-package cn.smallyoung.websiteadmin.controller.sys;
+package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.smallyoung.websiteadmin.entity.sys.MessageNotification;
+import cn.smallyoung.websiteadmin.entity.MessageNotification;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
-import cn.smallyoung.websiteadmin.service.sys.MessageNotificationService;
-import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.service.MessageNotificationService;
+import cn.smallyoung.websiteadmin.service.SysUserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

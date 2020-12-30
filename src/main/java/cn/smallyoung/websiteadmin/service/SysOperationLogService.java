@@ -1,7 +1,7 @@
-package cn.smallyoung.websiteadmin.service.sys;
+package cn.smallyoung.websiteadmin.service;
 
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.entity.sys.SysOperationLog;
+import cn.smallyoung.websiteadmin.entity.SysOperationLog;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

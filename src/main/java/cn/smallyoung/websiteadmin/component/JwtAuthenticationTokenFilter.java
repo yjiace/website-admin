@@ -1,8 +1,8 @@
 package cn.smallyoung.websiteadmin.component;
 
 
-import cn.smallyoung.websiteadmin.entity.sys.SysUser;
-import cn.smallyoung.websiteadmin.service.sys.SysUserService;
+import cn.smallyoung.websiteadmin.entity.SysUser;
+import cn.smallyoung.websiteadmin.service.SysUserService;
 import cn.smallyoung.websiteadmin.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +42,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            log.info("checking username:{}", username);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 SysUser user = sysUserService.loadUserByUsername(username);
                 if (jwtTokenUtil.validateToken(authToken, user)) {
