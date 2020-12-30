@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MessageNotificationDao extends BaseDao<MessageNotification, String> {
 
-    @Query(value = "select count(*) from t_message_notification where recipient_username = ?1 and status = 'unread' and is_delete = 'N' order by create_time desc ", nativeQuery = true)
+    @Query(value = "select count(*) from t_message_notification where recipient_username = ?1 and status = 'unread' and is_delete = 'N' ", nativeQuery = true)
     Integer countByRecipientUsername(String recipientUsername);
 
     @Modifying
