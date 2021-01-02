@@ -82,4 +82,4 @@ aj:
     aes-status: true
 
 baidu:
-  siteUrl: http://data.zz.baidu.com/urls?site=https://smallyoung.cn/article/{}.html&token=123
+  siteUrl: http://data.zz.baidu.com/urls?site=https://www.smallyoung.cn&token=123456

@@ -14,6 +14,7 @@ import cn.hutool.http.HtmlUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.ArticleDao;
 import cn.smallyoung.websiteadmin.entity.Article;
+import cn.smallyoung.websiteadmin.util.BaiduSiteApiInclusion;
 import cn.smallyoung.websiteadmin.util.UPYunUtil;
 import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +50,8 @@ public class ArticleService extends BaseService<Article, String> {
 
     @Resource
     private ArticleDao articleDao;
+    @Resource
+    private BaiduSiteApiInclusion baiduSiteApiInclusion;
 
     public Page<Map<String, Object>> findArticle(String category, Integer page, Integer size) {
         Map<String, Object> map = Dict.create().set("AND_INNERJOIN_category-id", category);
@@ -91,6 +94,7 @@ public class ArticleService extends BaseService<Article, String> {
         }
         //生成静态文件
         String filePath = articleCatalog + id + ".html";
+        boolean haveFile = (new File(filePath)).isFile();
         FileUtil.touch(filePath);
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate("article.html");
@@ -101,6 +105,10 @@ public class ArticleService extends BaseService<Article, String> {
         FileWriter writer = new FileWriter(filePath, "UTF-8");
         writer.write(result);
         articleDao.save(article);
+        if(!haveFile){
+            String url = StrUtil.format("https://www.smallyoung.cn/article/{}.html", id);
+            log.info("百度站长API提交新链，返回结果：" + baiduSiteApiInclusion.inclusion(url));
+        }
     }
 
     public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
