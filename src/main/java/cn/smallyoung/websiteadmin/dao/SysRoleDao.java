@@ -2,8 +2,6 @@ package cn.smallyoung.websiteadmin.dao;
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
 import cn.smallyoung.websiteadmin.entity.SysRole;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
@@ -13,15 +11,11 @@ import java.util.List;
 public interface SysRoleDao extends BaseDao<SysRole, String> {
 
     /**
-     * 修改角色状态
+     * 根据ID、状态查询角色列表
      *
-     * @param id       需要修改的角色id
-     * @param isDelete 修改的删除字段标识
-     * @return 修改成功条数
+     * @param idList   id列表
+     * @param isDelete 删除状态
+     * @return 查询的角色列表
      */
-    @Modifying
-    @Query("update SysRole r set r.isDelete=?2 where r.id=?1")
-    Integer updateStatus(Long id, String isDelete);
-
     List<SysRole> findByIdInAndIsDelete(List<String> idList, String isDelete);
 }

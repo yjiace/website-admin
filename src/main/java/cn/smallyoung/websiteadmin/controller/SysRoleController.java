@@ -56,9 +56,14 @@ public class SysRoleController {
                 PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
+    /**
+     * 根据ID查询详情
+     *
+     * @param id 角色ID
+     */
     @GetMapping(value = "findById")
     @PreAuthorize("hasRole('ROLE_ROLE_SAVE')")
-    public SysRole findById(String id){
+    public SysRole findById(String id) {
         return checkRole(id);
     }
 
@@ -68,13 +73,13 @@ public class SysRoleController {
     @PostMapping(value = "save")
     @PreAuthorize("hasRole('ROLE_ROLE_SAVE')")
     public SysRole save(SysRoleVO roleVO) {
-        if(StrUtil.hasBlank(roleVO.getName())){
+        if (StrUtil.hasBlank(roleVO.getName())) {
             throw new NullPointerException("参数错误");
         }
         SysRole role = new SysRole();
-        if(StrUtil.isNotBlank(roleVO.getId())){
+        if (StrUtil.isNotBlank(roleVO.getId())) {
             role = checkRole(roleVO.getId());
-        }else{
+        } else {
             role.setIsDelete("N");
         }
         BeanUtil.copyProperties(roleVO, role);
@@ -95,6 +100,11 @@ public class SysRoleController {
         return sysRoleService.save(role);
     }
 
+    /**
+     * 查询权限数
+     *
+     * @param id 角色ID
+     */
     @GetMapping(value = "findPermissionsTree")
     @PreAuthorize("hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
     public List<Tree<String>> findPermissionsTree(String id) {
@@ -112,18 +122,29 @@ public class SysRoleController {
                 });
     }
 
+    /**
+     * 赋予权限
+     *
+     * @param id            角色ID
+     * @param permissionIds 权限ID列表
+     */
     @PostMapping("grantPermissions")
     @PreAuthorize("hasRole('ROLE_ROLE_GRANT_PERMISSIONS')")
-    public void grantPermissions(String id, String permissionIds){
+    public void grantPermissions(String id, String permissionIds) {
         SysRole role = checkRole(id);
         List<SysPermission> permissions = null;
-        if(StrUtil.isNotBlank(permissionIds)){
+        if (StrUtil.isNotBlank(permissionIds)) {
             permissions = sysPermissionService.findByIdInAndIsDelete(Stream.of(permissionIds.split(",")).map(String::trim).collect(Collectors.toList()));
         }
         role.setSysPermissions(permissions);
         sysRoleService.save(role);
     }
 
+    /**
+     * 根据ID校验、获取对象
+     *
+     * @param id 角色ID
+     */
     private SysRole checkRole(String id) {
         if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");

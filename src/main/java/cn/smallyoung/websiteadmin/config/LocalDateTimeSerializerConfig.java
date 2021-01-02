@@ -24,7 +24,6 @@ public class LocalDateTimeSerializerConfig {
     /**
      * 序列化LocalDateTime
      *
-     * @return
      */
     @Bean
     @Primary

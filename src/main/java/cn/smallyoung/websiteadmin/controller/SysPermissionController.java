@@ -59,42 +59,55 @@ public class SysPermissionController {
                 PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
+    /**
+     * 根据ID查询权限详情
+     *
+     * @param id 权限ID
+     */
     @GetMapping(value = "findById")
     @PreAuthorize("hasRole('ROLE_PERMISSION_SAVE')")
-    public SysPermission findById(String id){
+    public SysPermission findById(String id) {
         return sysPermissionService.findById(id).orElse(null);
     }
 
+    /**
+     * 保存
+     */
     @PostMapping("save")
     @PreAuthorize("hasRole('ROLE_PERMISSION_SAVE')")
-    public SysPermission save(SysPermissionVO sysPermissionVO){
-        if(StrUtil.hasBlank(sysPermissionVO.getName())){
+    public SysPermission save(SysPermissionVO sysPermissionVO) {
+        if (StrUtil.hasBlank(sysPermissionVO.getName())) {
             throw new NullPointerException("参数错误");
         }
         SysPermission sysPermission = new SysPermission();
-        if(StrUtil.isNotBlank(sysPermissionVO.getId())){
+        if (StrUtil.isNotBlank(sysPermissionVO.getId())) {
             Optional<SysPermission> optional = sysPermissionService.findById(sysPermissionVO.getId());
-            if(!optional.isPresent()){
+            if (!optional.isPresent()) {
                 String error = String.format("根据ID【%s】没有找到该权限", sysPermission.getId());
                 log.error(error);
                 throw new UsernameNotFoundException(error);
             }
             sysPermission = optional.get();
-        }else{
+        } else {
             sysPermission.setIsDelete("N");
         }
         BeanUtil.copyProperties(sysPermissionVO, sysPermission);
         return sysPermissionService.save(sysPermission);
     }
 
+    /**
+     * 删除
+     *
+     * @param id 权限ID
+     */
     @DeleteMapping("delete")
     @PreAuthorize("hasRole('ROLE_PERMISSION_DEL')")
-    public void delete(String id){
-        if(StrUtil.hasBlank(id)){
+    public void delete(String id) {
+        if (StrUtil.hasBlank(id)) {
             throw new NullPointerException("参数错误");
         }
         Optional<SysPermission> optional = sysPermissionService.findById(id);
-        if(!optional.isPresent()){
+        if (!optional.isPresent()) {
             String error = String.format("根据ID【%s】没有找到该权限", id);
             log.error(error);
             throw new UsernameNotFoundException(error);

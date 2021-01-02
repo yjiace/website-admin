@@ -175,6 +175,11 @@ public class SysUserController {
         return sysUserService.save(user);
     }
 
+    /**
+     * 查询用户权限树
+     *
+     * @param username 用户名
+     */
     @GetMapping(value = "findRolesList")
     @PreAuthorize("hasRole('ROLE_SYSUSER_ASSIGN_ROLES')")
     public Dict findList(String username) {
@@ -204,6 +209,11 @@ public class SysUserController {
         return sysUserService.save(user);
     }
 
+    /**
+     * 根据用户名校验、获取对象
+     *
+     * @param username 用户名
+     */
     private SysUser checkUser(String username) {
         if (StrUtil.hasBlank(username)) {
             throw new NullPointerException("参数错误");

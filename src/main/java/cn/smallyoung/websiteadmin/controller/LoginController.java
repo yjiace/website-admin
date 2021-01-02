@@ -2,6 +2,7 @@ package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.lang.Dict;
 import cn.hutool.core.util.StrUtil;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
 import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.SysPermissionService;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author smallyoung
@@ -57,7 +61,10 @@ public class LoginController {
         SysUser sysUser = sysUserService.loadUserByUsername(username);
         String token = sysUserService.login(sysUser, password);
         log.info("用户【{}】登录系统", username);
+        List<SysPermission> sysPermissionList = sysUser.getAllPermission();
         return Dict.create().set("token", tokenHead + " " + token)
-                .set("username", username).set("permissions", sysPermissionService.toTree(sysUser.getAllPermission()));
+                .set("permissionVal", sysPermissionList.size() > 0 ? sysUser.getAllPermission().stream()
+                        .map(p -> "." + p.getVal()).collect(Collectors.joining(",")) : new ArrayList<>())
+                .set("username", username).set("permissions", sysPermissionService.toTree(sysPermissionList));
     }
 }

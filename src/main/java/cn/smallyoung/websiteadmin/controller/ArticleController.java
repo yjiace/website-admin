@@ -1,7 +1,6 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.util.EscapeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Article;
@@ -37,110 +36,159 @@ public class ArticleController {
     @Resource
     private ArticleService articleService;
 
+    /**
+     * 查询所有文章列表
+     *
+     * @param page    页码
+     * @param request 参数
+     * @param size    页数
+     */
     @GetMapping("findAll")
     @PreAuthorize("hasRole('ROLE_ARTICLE')")
     public Page<Article> findAllArticle(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
-                                 @RequestParam(defaultValue = "9")Integer size){
+                                        @RequestParam(defaultValue = "9") Integer size) {
         return articleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
                 PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
+    /**
+     * 根据ID查询文章详情
+     *
+     * @param id 文章ID
+     * @return 文章对象
+     */
     @GetMapping("/findById")
     @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
-    public Article getArticle(String id){
-        if(id == null){
+    public Article getArticle(String id) {
+        if (id == null) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> article = articleService.findById(id);
-        if(article.isPresent()){
+        if (article.isPresent()) {
             return article.get();
         }
         throw new NullPointerException("获取文章对象失败");
     }
 
+    /**
+     * 获取文章的Markdown文档
+     *
+     * @param id 文章ID
+     */
     @GetMapping("getMdContentById")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
-    public String getMdContentById(String id){
-        if(id == null){
+    public String getMdContentById(String id) {
+        if (id == null) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> article = articleService.findById(id);
-        if(article.isPresent()){
+        if (article.isPresent()) {
             return EscapeUtil.escape(article.get().getMdContent());
         }
         throw new NullPointerException("获取文章对象失败");
     }
 
-
+    /**
+     * 更改Markdown内容
+     *
+     * @param id          文章ID
+     * @param mdContent   Markdown内容
+     * @param htmlContent html内容
+     */
     @PostMapping("updateMd")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
-    public void updateMd(String id, String mdContent, String htmlContent){
+    public void updateMd(String id, String mdContent, String htmlContent) {
         articleService.updateMdContentAndHtmlContent(id, mdContent, htmlContent);
     }
 
-
+    /**
+     * 上次文章内的图片
+     *
+     * @param file 二进制文件
+     * @param path 路径
+     */
     @PostMapping("uploadImg/{path}")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
     public String uploadImg(MultipartFile file, @PathVariable String path) throws IOException, UpException {
         return articleService.uploadImg(file, "/article/" + path + "/");
     }
 
+    /**
+     * 文件封面
+     *
+     * @param file 二进制文件
+     */
     @PostMapping("uploadCover")
     @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
     public String uploadCover(MultipartFile file) throws IOException, UpException {
         return articleService.uploadImg(file, "/article/cover/");
     }
 
+    /**
+     * 保存
+     */
     @PostMapping("save")
     @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
     public Article saveArticle(ArticleVO articleVO) {
         Article article = new Article();
-        if(StrUtil.isBlank(articleVO.getId())){
+        if (StrUtil.isBlank(articleVO.getId())) {
             article.setIsDelete("N");
             article.setStatus("N");
             article.setRecommend("N");
-        }else{
+        } else {
             Optional<Article> optional = articleService.findById(articleVO.getId());
-            if(!optional.isPresent()){
+            if (!optional.isPresent()) {
                 throw new NullPointerException("获取文章对象失败");
             }
             article = optional.get();
         }
         BeanUtil.copyProperties(articleVO, article);
-        if(StrUtil.isBlank(article.getId())){
+        if (StrUtil.isBlank(article.getId())) {
             article.setIsDelete("N");
         }
         return articleService.save(article);
     }
 
+    /**
+     * 更改状态、推荐
+     *
+     * @param id  文章ID
+     * @param key 类型，status：状态；recommend：推荐
+     * @param val 修改后的值
+     */
     @PostMapping("updateStatus")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATESTATUS')")
-    public Article updateStatus(String id, String key, String val){
-        if(id == null || StrUtil.hasBlank(key, val)){
+    public Article updateStatus(String id, String key, String val) {
+        if (id == null || StrUtil.hasBlank(key, val)) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> optional = articleService.findById(id);
-        if(!optional.isPresent()){
+        if (!optional.isPresent()) {
             throw new NullPointerException("获取文章对象失败");
         }
         Article article = optional.get();
-        if(key.equals("status")){
+        if (key.equals("status")) {
             article.setStatus(val);
         }
-        if(key.equals("recommend")){
+        if (key.equals("recommend")) {
             article.setRecommend(val);
         }
         return articleService.save(article);
     }
 
+    /**
+     * 删除文章
+     *
+     * @param id 文章ID
+     */
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('ROLE_ARTICLE_DEL')")
-    public void delete(String id){
-        if(id == null){
+    public void delete(String id) {
+        if (id == null) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> optional = articleService.findById(id);
-        if(!optional.isPresent()){
+        if (!optional.isPresent()) {
             throw new NullPointerException("获取文章对象失败");
         }
         Article article = optional.get();

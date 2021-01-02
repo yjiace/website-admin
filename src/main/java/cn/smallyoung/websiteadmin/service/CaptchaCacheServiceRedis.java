@@ -7,6 +7,9 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author smallyoung
+ */
 @AutoService(CaptchaCacheService.class)
 public class CaptchaCacheServiceRedis implements CaptchaCacheService {
 

@@ -46,8 +46,6 @@ public class ArticleService extends BaseService<Article, String> {
     private String dirPath;
     @Value("${article.catalog}")
     private String articleCatalog;
-    @Value("${baidu.siteUrl}")
-    private String baiduSiteUrl;
 
     @Resource
     private ArticleDao articleDao;
@@ -93,7 +91,6 @@ public class ArticleService extends BaseService<Article, String> {
         }
         //生成静态文件
         String filePath = articleCatalog + id + ".html";
-        boolean haveFile = (new File(filePath)).isFile();
         FileUtil.touch(filePath);
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
         Template template = engine.getTemplate("article.html");
@@ -104,11 +101,6 @@ public class ArticleService extends BaseService<Article, String> {
         FileWriter writer = new FileWriter(filePath, "UTF-8");
         writer.write(result);
         articleDao.save(article);
-//        if(!haveFile){
-//            String url = StrUtil.format(baiduSiteUrl, id);
-//            log.info("百度站长API提交新链，请求链接：" + url);
-//            log.info("百度站长API提交新链，返回结果：" + HttpRequest.get(url).execute().body());
-//        }
     }
 
     public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
