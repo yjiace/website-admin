@@ -23,7 +23,7 @@ import java.util.Optional;
 @RestController
 @ResponseResultBody
 @RequestMapping("/sys/category")
-public class CategoryController {
+public class SysCategoryController {
 
     @Resource
     private CategoryService categoryService;

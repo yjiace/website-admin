@@ -31,7 +31,7 @@ import java.util.Optional;
 @RestController
 @ResponseResultBody
 @RequestMapping("/sys/article")
-public class ArticleController {
+public class SysArticleController {
 
     @Resource
     private ArticleService articleService;
@@ -60,14 +60,15 @@ public class ArticleController {
     @GetMapping("/findById")
     @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
     public Article getArticle(String id) {
-        if (id == null) {
+        if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> article = articleService.findById(id);
         if (article.isPresent()) {
             return article.get();
         }
-        throw new NullPointerException("获取文章对象失败");
+        log.error("获取文章对象失败");
+        throw new RuntimeException("获取文章对象失败");
     }
 
     /**
@@ -78,14 +79,15 @@ public class ArticleController {
     @GetMapping("getMdContentById")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
     public String getMdContentById(String id) {
-        if (id == null) {
+        if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> article = articleService.findById(id);
         if (article.isPresent()) {
             return EscapeUtil.escape(article.get().getMdContent());
         }
-        throw new NullPointerException("获取文章对象失败");
+        log.error("获取文章对象失败");
+        throw new RuntimeException("获取文章对象失败");
     }
 
     /**
@@ -138,7 +140,8 @@ public class ArticleController {
         } else {
             Optional<Article> optional = articleService.findById(articleVO.getId());
             if (!optional.isPresent()) {
-                throw new NullPointerException("获取文章对象失败");
+                log.error("获取文章对象失败");
+                throw new RuntimeException("获取文章对象失败");
             }
             article = optional.get();
         }
@@ -159,12 +162,13 @@ public class ArticleController {
     @PostMapping("updateStatus")
     @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATESTATUS')")
     public Article updateStatus(String id, String key, String val) {
-        if (id == null || StrUtil.hasBlank(key, val)) {
+        if (StrUtil.isBlank(id) || StrUtil.hasBlank(key, val)) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> optional = articleService.findById(id);
         if (!optional.isPresent()) {
-            throw new NullPointerException("获取文章对象失败");
+            log.error("获取文章对象失败");
+            throw new RuntimeException("获取文章对象失败");
         }
         Article article = optional.get();
         if (key.equals("status")) {
@@ -184,15 +188,24 @@ public class ArticleController {
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('ROLE_ARTICLE_DEL')")
     public void delete(String id) {
-        if (id == null) {
+        if (StrUtil.isBlank(id)) {
             throw new NullPointerException("参数错误");
         }
         Optional<Article> optional = articleService.findById(id);
         if (!optional.isPresent()) {
-            throw new NullPointerException("获取文章对象失败");
+            log.error("获取文章对象失败");
+            throw new RuntimeException("获取文章对象失败");
         }
         Article article = optional.get();
         article.setIsDelete("Y");
         articleService.save(article);
+    }
+
+    /**
+     * 静态化所有文章列表
+     */
+    @PostMapping("staticAllArticle")
+    public void staticAllArticle(){
+        articleService.staticAllArticle();
     }
 }
