@@ -85,4 +85,9 @@ public class SysCategoryController {
         category.setIsDelete("Y");
         categoryService.save(category);
     }
+
+    @GetMapping("staticCategory")
+    public void staticCategory(@RequestParam(defaultValue = "")  String id){
+        categoryService.staticCategory(id);
+    }
 }

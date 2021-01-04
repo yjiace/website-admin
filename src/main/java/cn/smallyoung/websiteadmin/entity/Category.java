@@ -5,6 +5,7 @@ import cn.smallyoung.websiteadmin.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -20,6 +21,7 @@ import java.util.Map;
 @Setter
 @Entity
 @Table(name = "t_category")
+@Where(clause = " is_delete = 'N' ")
 public class Category extends BaseEntity implements Serializable {
 
 
@@ -37,6 +39,7 @@ public class Category extends BaseEntity implements Serializable {
 
     @JsonIgnore
     @OneToMany(mappedBy="category")
+    @OrderBy(value = " weight desc ")
     private List<Article> articles;
 
     @Column(name = "background_color")

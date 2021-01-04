@@ -216,15 +216,45 @@
     <div id="category-cloud" class="container chip-container">
         <div class="card">
             <div class="card-content">
-                <!--                <div class="tag-title center-align">-->
-                <!--                    <i class="fa fa-bookmark"></i>&nbsp;&nbsp;文章分类-->
-                <!--                </div>-->
-                <div class="tag-chips" id="categories"></div>
+                <div class="tag-chips" id="categories">
+                    <a th:href="'/'+${item.id}+'/1.html'" th:each=" item : ${categories}">
+                        <span class="chip center-align waves-effect waves-light chip-default categories-span" th:attr="id=${item.id}"
+                              th:style = "'background-color:'+${item.backgroundColor}">
+                           [[${item.name}]] <span class="tag-length" th:text="${item.count}"></span>
+                        </span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
     <article id="articles" class="container articles">
-        <div class="row tags-posts" id="blogs"></div>
+        <div class="row tags-posts" id="blogs">
+            <div class="article tag-post col s12 m6 l4" data-aos="zoom-in" th:each=" item : ${data}">
+                <div class="card">
+                    <a th:href="'/article/'+${item.id}+'.html'">
+                        <div class="card-image tag-image">
+                            <img th:src="@{${item.coverUrl}}" class="responsive-img" th:attr="alt=${item.title}">
+                            <span class="card-title" th:text="${item.title}"></span>
+                        </div>
+                    </a>
+                    <div class="card-content article-content">
+                        <div class="summary block-with-text" th:text="${item.introduction}"></div>
+                        <div class="publish-info">
+                            <span class="publish-date" th:text="'<i class=\"far fa-clock fa-fw icon-date\"></i>' + ${#dates.format(item.createTime, 'yyyy-MM-dd')}"></span>
+                            <span class="publish-author">
+                                <i class="fa fa-bookmark fa-fw icon-category"></i>
+                                <a href="javascript:void(0);" class="post-category" th:text="${item.category.nam}"></a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-action article-tags">
+                        <a href="javascript:void(0);" th:if="${item.tags} != null" th:each=" t : ${#strings.arraySplit(item.tags, ',')}">
+                            <span class="chip bg-color" th:text="${t}"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </article>
 </main>
 
@@ -248,126 +278,82 @@
 </div>
 
 <script src="//www.layuicdn.com/layui/layui.js" type="text/javascript"></script>
-<script id="categoriesTemplate" type="text/html">
-    {{#  $.each(d, function(index, item){ }}
-    <a href="javascript:void(0);" title="{{ item.name }}: {{ item.count }}"
-       onclick="changeCategories('{{ item.id }}', 1);">
-                <span class="chip center-align waves-effect waves-light chip-default categories-span"
-                      id="{{ item.id }}" style="background-color: {{ item.backgroundColor }};">
-                    {{ item.name }}<span class="tag-length">{{ item.count }}</span>
-                </span>
-    </a>
-    {{#  }); }}
-</script>
-<script id="blogTemplate" type="text/html">
-    {{#  $.each(d, function(index, item){ }}
-    <div class="article tag-post col s12 m6 l4" data-aos="zoom-in">
-        <div class="card">
-            <a href="article/{{ item.id }}.html">
-                <div class="card-image tag-image">
-                    <img src="{{ item.coverUrl }}" class="responsive-img" alt="{{ item.title }}">
-                    <span class="card-title">{{ item.title }}</span>
-                </div>
-            </a>
-            <div class="card-content article-content">
-                <div class="summary block-with-text">{{ item.introduction }}</div>
-                <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>{{ item.createTime?util.toDateString(item.createTime, 'yyyy-MM-dd'):'' }}
-                            </span>
-                    <span class="publish-author">
-                                <i class="fa fa-bookmark fa-fw icon-category"></i>
-                                <a href="javascript:void(0);" class="post-category">{{ item.category.name }}</a>
-                            </span>
-                </div>
-            </div>
-            <div class="card-action article-tags">
-                <a href="javascript:void(0);">
-                    {{# if(item.tags){ $.each(item.tags.split(','), function(i, t){ }}
-                    <span class="chip bg-color">{{ t }}</span>
-                    {{# })}; }}
-                </a>
-            </div>
-        </div>
-    </div>
-    {{#  }); }}
-</script>
 
-<script type="text/javascript">
+<!--<script type="text/javascript">-->
 
-    let blogs, laytpl, util, articlePage;
+<!--    let blogs, laytpl, util, articlePage;-->
 
-    const articlePageSize = 12;
+<!--    const articlePageSize = 12;-->
 
-    function previous() {
-        if (articlePage && !articlePage.first) {
-            changeCategories(articlePage.category, articlePage.page - 1);
-            $("html,body").animate({
-                scrollTop: 280
-            }, 900);
-        }
-    }
+<!--    function previous() {-->
+<!--        if (articlePage && !articlePage.first) {-->
+<!--            changeCategories(articlePage.category, articlePage.page - 1);-->
+<!--            $("html,body").animate({-->
+<!--                scrollTop: 280-->
+<!--            }, 900);-->
+<!--        }-->
+<!--    }-->
 
-    function next() {
-        if (articlePage && !articlePage.last) {
-            changeCategories(articlePage.category, articlePage.page + 1);
-            $("html,body").animate({
-                scrollTop: 280
-            }, 900);
-        }
-    }
+<!--    function next() {-->
+<!--        if (articlePage && !articlePage.last) {-->
+<!--            changeCategories(articlePage.category, articlePage.page + 1);-->
+<!--            $("html,body").animate({-->
+<!--                scrollTop: 280-->
+<!--            }, 900);-->
+<!--        }-->
+<!--    }-->
 
-    function changeCategories(category, page) {
-        $("#blogs").html("");
-        $.get("//api.smallyoung.cn/web/findArticleByCategory", {
-            category: category,
-            page: page,
-            size: articlePageSize
-        }, function (data) {
-            articlePage = data.data;
-            articlePage.category = category;
-            articlePage.page = page;
-            if (data.data.totalElements > 0) {
-                laytpl($("#blogTemplate").html()).render(data.data.content, function (html) {
-                    $("#blogs").html(html);
-                });
-                if (data.data.totalElements > 9) {
-                    $("#page .center-align").html(page + "/" + data.data.totalPages);
-                    $("#page").show();
-                    if (data.data.first) {
-                        $("#page .left").addClass("disabled").removeClass('waves-effect').removeClass('waves-light').removeClass('bg-color');
-                        $("#page .right").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');
-                    } else if (data.data.last) {
-                        $("#page .right").addClass("disabled").removeClass('waves-effect').removeClass('waves-light').removeClass('bg-color');
-                        $("#page .left").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');
-                    } else {
-                        $("#page .left").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');
-                        $("#page .right").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');
-                    }
-                } else {
-                    $("#page").hide();
-                }
-            }
-            $("#articles").css("height", $('#blogs').height() + "px");
-        });
-        $(".categories-span").addClass("chip-default").removeClass("chip-active");
-        $("#" + category).removeClass("chip-default").addClass("chip-active");
-    }
+<!--    function changeCategories(category, page) {-->
+<!--        $("#blogs").html("");-->
+<!--        $.get("//api.smallyoung.cn/web/findArticleByCategory", {-->
+<!--            category: category,-->
+<!--            page: page,-->
+<!--            size: articlePageSize-->
+<!--        }, function (data) {-->
+<!--            articlePage = data.data;-->
+<!--            articlePage.category = category;-->
+<!--            articlePage.page = page;-->
+<!--            if (data.data.totalElements > 0) {-->
+<!--                laytpl($("#blogTemplate").html()).render(data.data.content, function (html) {-->
+<!--                    $("#blogs").html(html);-->
+<!--                });-->
+<!--                if (data.data.totalElements > 9) {-->
+<!--                    $("#page .center-align").html(page + "/" + data.data.totalPages);-->
+<!--                    $("#page").show();-->
+<!--                    if (data.data.first) {-->
+<!--                        $("#page .left").addClass("disabled").removeClass('waves-effect').removeClass('waves-light').removeClass('bg-color');-->
+<!--                        $("#page .right").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');-->
+<!--                    } else if (data.data.last) {-->
+<!--                        $("#page .right").addClass("disabled").removeClass('waves-effect').removeClass('waves-light').removeClass('bg-color');-->
+<!--                        $("#page .left").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');-->
+<!--                    } else {-->
+<!--                        $("#page .left").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');-->
+<!--                        $("#page .right").removeClass("disabled").addClass('waves-effect').addClass('waves-light').addClass('bg-color');-->
+<!--                    }-->
+<!--                } else {-->
+<!--                    $("#page").hide();-->
+<!--                }-->
+<!--            }-->
+<!--            $("#articles").css("height", $('#blogs').height() + "px");-->
+<!--        });-->
+<!--        $(".categories-span").addClass("chip-default").removeClass("chip-active");-->
+<!--        $("#" + category).removeClass("chip-default").addClass("chip-active");-->
+<!--    }-->
 
-    layui.use(['laytpl', 'util'], function () {
-        laytpl = layui.laytpl;
-        util = layui.util;
+<!--    layui.use(['laytpl', 'util'], function () {-->
+<!--        laytpl = layui.laytpl;-->
+<!--        util = layui.util;-->
 
-        $.get("//api.smallyoung.cn/web/findCategory", function (data) {
-            blogs = data;
-            laytpl($("#categoriesTemplate").html()).render(data.data, function (html) {
-                $("#categories").html(html);
-            });
-            changeCategories(data.data[0].id, 1);
-        });
+<!--        $.get("//api.smallyoung.cn/web/findCategory", function (data) {-->
+<!--            blogs = data;-->
+<!--            laytpl($("#categoriesTemplate").html()).render(data.data, function (html) {-->
+<!--                $("#categories").html(html);-->
+<!--            });-->
+<!--            changeCategories(data.data[0].id, 1);-->
+<!--        });-->
 
-    });
-</script>
+<!--    });-->
+<!--</script>-->
 
 <div class="container paging">
     <div class="row">
