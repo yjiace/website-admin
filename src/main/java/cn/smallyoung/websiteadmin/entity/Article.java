@@ -92,7 +92,7 @@ public class Article extends BaseEntity implements Serializable {
     public Map<String, Object> toMap(){
         return Dict.create().set("id", this.id).set("title", this.title)
                 .set("category", this.category.toMap()).set("coverUrl", this.coverUrl)
-                .set("introduction", this.introduction).set("tags", this.tags)
+                .set("introduction", this.introduction).set("tags", this.tags == null ? null : this.tags.split(","))
                 .set("recommend", this.recommend)
                 .set("createTime", this.getCreateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                 .set("updateTime", this.getUpdateTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));

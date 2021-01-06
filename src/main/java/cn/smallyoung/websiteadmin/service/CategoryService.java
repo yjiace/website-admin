@@ -21,10 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -65,28 +62,29 @@ public class CategoryService extends BaseService<Category, String> {
         FileWriter writer;
         List<Article> articles;
         List<Article> nowPage;
-        int pageNo;
         int pageSize = 12;
         int page;
         for(Category c : categories){
-            pageNo = 0;
             articles = c.getArticles();
             if(CollectionUtil.isEmpty(articles)){
                 continue;
             }
+            articles = articles.stream().sorted(Comparator.comparing(Article::getWeight).reversed())
+                    .sorted(Comparator.comparing(Article::getCreateTime).reversed()).collect(Collectors.toList());
             page = articles.size() / pageSize;
             if(articles.size() % pageSize != 0){
                 page++;
             }
-            for(int i = 0; i < page; i++){
-                nowPage = ListUtil.page(pageNo, pageSize, articles);
+            for(int i = 1; i <= page; i++){
+                nowPage = ListUtil.page(i - 1, pageSize, articles);
                 engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
-                template = engine.getTemplate("blog.html");
-                result = template.render(Dict.create().set("category", c).set("data", nowPage)
+                template = engine.getTemplate("category.html");
+                result = template.render(Dict.create().set("category", c)
+                        .set("pageNo", i).set("page", page)
+                        .set("data", nowPage.stream().map(Article::toMap).collect(Collectors.toList()))
                         .set("categories", categories.stream().map(Category::toMap).collect(Collectors.toList())));
-                writer = new FileWriter(dirPath + c.getId() + File.separator + (pageNo + 1) + ".html", "UTF-8");
+                writer = new FileWriter(dirPath + c.getId() + File.separator + i + ".html", "UTF-8");
                 writer.write(result);
-                pageNo++;
             }
         }
     }

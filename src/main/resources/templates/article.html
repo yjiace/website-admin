@@ -10,12 +10,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="keywords" th:attr="content=${article.tags}">
-    <meta name="author" content="smallyoung"/>
+
+    <meta name="keywords" th:attr="content=${article.tags}+',SmallYoung,'+${article.title}">
+    <meta name="description" th:attr="content=${article.introduction}"/>
+    <meta name="author" content="SmallYoung"/>
+    <meta name="robots" content="index,follow">
 
     <title th:utext="${article.title}"></title>
     <link rel="icon" type="image/png" href="//cdn.smallyoung.cn/libs/image/logo.png">
-
     <link rel="stylesheet" type="text/css" href="//cdn.smallyoung.cn/libs/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="//cdn.smallyoung.cn/libs/css/materialize.min.css">
     <link rel="stylesheet" type="text/css" href="//cdn.smallyoung.cn/libs/css/aos.css">
@@ -32,7 +34,8 @@
 
 
 <body data-aos-easing="ease-in-out-sine" data-aos-duration="700" data-aos-delay="100">
-<script type="text/javascript" src="//cdn.smallyoung.cn/libs/js/head.min.js"></script>
+
+<header class="navbar-fixed" th:include="common :: header"></header>
 
 <div class="bg-cover pd-header post-cover"
      style="background-image: url('//cdn.smallyoung.cn/libs/image/0.jpg')">
@@ -40,7 +43,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title"  th:utext="${article.title}"></h1>
+                    <h1 class="description center-align post-title" th:utext="${article.title}"></h1>
                 </div>
             </div>
         </div>
@@ -176,7 +179,7 @@
                                 <i class="fa fa-calendar-minus-o fa-fw"></i>发布日期:&nbsp;&nbsp;<span th:text="${createTime}"></span>
                             </div>
                             <div class="info-break-policy">
-                                <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;<span th:text="${worksNum} + ' K'" ></span>
+                                <i class="fa fa-file-word-o fa-fw"></i>文章字数:&nbsp;&nbsp;<span th:text="${worksNum} + ' K'"></span>
                             </div>
                             <div class="info-break-policy">
                                 <i class="fa fa-clock-o fa-fw"></i>阅读时长:&nbsp;&nbsp;<span th:text="${readTime} + ' 分钟'"></span>
@@ -215,8 +218,7 @@
     <script src="//cdn.smallyoung.cn/libs/js/code.js"></script>
 </main>
 
-<script type="text/javascript" src="//cdn.smallyoung.cn/libs/js/footer.min.js"></script>
-
+<footer class='page-footer bg-color' th:include="common :: footer"></footer>
 <!-- 回到顶部按钮 -->
 <div id="backTop" class="top-scroll" style="display: block;">
     <a class="btn-floating btn-large waves-effect waves-light" href="javascript:void(0);">
@@ -236,8 +238,7 @@
 <script src="//cdn.smallyoung.cn/libs/js/prism.js"></script>
 
 
-<canvas width="1920" height="902"
-        style="opacity: 0.6; position: fixed; top: 0px; left: 0px; z-index: -1; width: 100%; height: 100%; pointer-events: none;"></canvas>
+<canvas width="1920" height="902" style="opacity: 0.6; position: fixed; top: 0px; left: 0px; z-index: -1; width: 100%; height: 100%; pointer-events: none;"></canvas>
 <div class="sidenav-overlay"></div>
 <div class="drag-target"></div>
 </body>
