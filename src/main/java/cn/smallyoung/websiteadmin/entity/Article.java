@@ -5,6 +5,7 @@ import cn.smallyoung.websiteadmin.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Setter
 @Entity
 @Table(name = "t_article")
+@Where(clause = " is_delete = 'N' ")
 public class Article extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 9144829538735195054L;

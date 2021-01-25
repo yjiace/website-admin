@@ -18,4 +18,12 @@ public interface ArticleDao  extends BaseDao<Article, String> {
      */
     @Query(value = "from Article a where a.status = 'Y' and a.isDelete = 'N' and a.htmlContent is not null")
     List<Article> findEffectiveArticle();
+
+    /**
+     * 根据ID列表查询文章信息
+     *
+     * @param ids id列表
+     * @return 查询到的文章列表
+     */
+    List<Article> findByIdIn(List<String> ids);
 }

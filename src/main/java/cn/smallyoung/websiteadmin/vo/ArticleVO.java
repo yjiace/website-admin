@@ -1,6 +1,5 @@
 package cn.smallyoung.websiteadmin.vo;
 
-import cn.smallyoung.websiteadmin.entity.Category;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -35,7 +34,7 @@ public class ArticleVO implements Serializable {
     /**
      * 分类
      */
-    private Category category;
+    private String categoryId;
 
     /**
      * 封面图片地址

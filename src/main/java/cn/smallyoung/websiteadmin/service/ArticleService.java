@@ -58,6 +58,10 @@ public class ArticleService extends BaseService<Article, String> {
     @Resource
     private BaiduSiteApiInclusion baiduSiteApiInclusion;
 
+    public List<Article> findByIdIn(List<String> ids){
+        return articleDao.findByIdIn(ids);
+    }
+
     public Page<Map<String, Object>> findArticle(String category, Integer page, Integer size) {
         Map<String, Object> map = Dict.create().set("AND_INNERJOIN_category-id", category);
         Pageable pageable = PageRequest.of(page - 1, size,

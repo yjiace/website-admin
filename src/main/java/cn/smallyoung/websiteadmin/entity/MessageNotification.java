@@ -3,6 +3,7 @@ package cn.smallyoung.websiteadmin.entity;
 import cn.smallyoung.websiteadmin.interfaces.DataName;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -19,6 +20,7 @@ import java.time.LocalDateTime;
 @Setter
 @Entity
 @Table(name = "t_message_notification")
+@Where(clause = " is_delete = 'N' ")
 @EntityListeners({AuditingEntityListener.class})
 public class MessageNotification implements Serializable {
 

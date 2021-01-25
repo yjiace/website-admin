@@ -1,11 +1,14 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.EscapeUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Article;
+import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
+import cn.smallyoung.websiteadmin.service.CategoryService;
 import cn.smallyoung.websiteadmin.vo.ArticleVO;
 import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +23,7 @@ import org.springframework.web.util.WebUtils;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -35,6 +39,8 @@ public class SysArticleController {
 
     @Resource
     private ArticleService articleService;
+    @Resource
+    private CategoryService categoryService;
 
     /**
      * 查询所有文章列表
@@ -146,6 +152,14 @@ public class SysArticleController {
             article = optional.get();
         }
         BeanUtil.copyProperties(articleVO, article);
+        if(StrUtil.isNotBlank(articleVO.getCategoryId())){
+            Optional<Category> optional = categoryService.findById(articleVO.getCategoryId());
+            if(!optional.isPresent()){
+                log.error("获取文章类别失败");
+                throw new RuntimeException("获取文章类别失败");
+            }
+            article.setCategory(optional.get());
+        }
         if (StrUtil.isBlank(article.getId())) {
             article.setIsDelete("N");
         }
@@ -183,22 +197,19 @@ public class SysArticleController {
     /**
      * 删除文章
      *
-     * @param id 文章ID
+     * @param ids 文章ID集合
      */
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('ROLE_ARTICLE_DEL')")
-    public void delete(String id) {
-        if (StrUtil.isBlank(id)) {
+    public void delete(@RequestParam(value = "ids") List<String> ids) {
+        if (CollUtil.isEmpty(ids)) {
             throw new NullPointerException("参数错误");
         }
-        Optional<Article> optional = articleService.findById(id);
-        if (!optional.isPresent()) {
-            log.error("获取文章对象失败");
-            throw new RuntimeException("获取文章对象失败");
+        List<Article> articles = articleService.findByIdIn(ids);
+        if (CollUtil.isNotEmpty(articles)) {
+            articles.forEach(a -> a.setIsDelete("Y"));
+            articleService.save(articles);
         }
-        Article article = optional.get();
-        article.setIsDelete("Y");
-        articleService.save(article);
     }
 
     /**
