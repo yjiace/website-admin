@@ -43,11 +43,6 @@ public class CategoryService extends BaseService<Category, String> {
         return categoryDao.updateIsDeleteByIdIn(ids);
     }
 
-    public List<Map<String, Object>> findAllCategory() {
-        List<Category> categories = this.findAll();
-        return categories.stream().map(Category::toMap).collect(Collectors.toList());
-    }
-
     public void staticCategory(List<String> ids){
         List<Category> categories = CollUtil.isEmpty(ids) ? categoryDao.findByIdIn(ids) : categoryDao.findAll();
         if(CollUtil.isEmpty(categories)){
@@ -81,7 +76,7 @@ public class CategoryService extends BaseService<Category, String> {
                 result = template.render(Dict.create().set("category", c)
                         .set("pageNo", i).set("page", page)
                         .set("data", nowPage.stream().map(Article::toMap).collect(Collectors.toList()))
-                        .set("categories", categories.stream().map(Category::toMap).collect(Collectors.toList())));
+                        .set("categories", categories));
                 writer = new FileWriter(dirPath + c.getId() + File.separator + i + ".html", "UTF-8");
                 writer.write(result);
             }

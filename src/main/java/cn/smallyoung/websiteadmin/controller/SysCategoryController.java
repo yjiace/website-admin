@@ -6,6 +6,7 @@ import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class SysCategoryController {
     @GetMapping("findAll")
     @PreAuthorize("hasRole('ROLE_CATEGORY')")
     public List<Category> findAll() {
-        return categoryService.findAll();
+        return categoryService.findAll(Sort.by(Sort.Direction.DESC, "createTime"));
     }
 
 

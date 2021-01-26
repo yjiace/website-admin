@@ -1,11 +1,13 @@
 package cn.smallyoung.websiteadmin.controller;
 
 import cn.hutool.core.util.StrUtil;
+import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.ArticleService;
 import cn.smallyoung.websiteadmin.service.CategoryService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,15 +37,16 @@ public class WebApiController {
      * 查询类目
      */
     @GetMapping("findCategory")
-    public List<Map<String, Object>> findCategory(){
-        return categoryService.findAllCategory();
+    public List<Category> findCategory(){
+        return categoryService.findAll(Sort.by(Sort.Direction.DESC, "createTime"));
     }
 
     /**
      * 根据类目查询文章
      */
     @GetMapping("findArticleByCategory")
-    public Page<Map<String, Object>> findArticleByCategory(String category, @RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "9")Integer size){
+    public Page<Map<String, Object>> findArticleByCategory(String category, @RequestParam(defaultValue = "1") Integer page,
+                                                           @RequestParam(defaultValue = "9")Integer size){
         if(StrUtil.hasBlank(category)){
             throw new NullPointerException("Invalid parameter");
         }

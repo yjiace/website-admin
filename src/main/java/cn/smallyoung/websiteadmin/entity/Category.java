@@ -1,6 +1,5 @@
 package cn.smallyoung.websiteadmin.entity;
 
-import cn.hutool.core.lang.Dict;
 import cn.smallyoung.websiteadmin.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import org.hibernate.annotations.Where;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 类目
@@ -44,9 +42,4 @@ public class Category extends BaseEntity implements Serializable {
 
     @Column(name = "background_color")
     private String backgroundColor;
-
-    public Map<String, Object> toMap(){
-        return Dict.create().set("id", this.id).set("name", this.name)
-                .set("backgroundColor", this.backgroundColor);
-    }
 }

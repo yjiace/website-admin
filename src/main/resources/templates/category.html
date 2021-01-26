@@ -87,7 +87,8 @@
                 <div class="tag-chips" id="categories">
                     <a th:href="'/'+${item.id}+'/1.html'" th:each=" item : ${categories}">
                         <span class="chip center-align waves-effect waves-light chip-default categories-span" th:attr="id=${item.id}"
-                              th:style = "'background-color:'+${item.backgroundColor}" th:text="${item.name}">
+                              th:style = "'background-color:'+${item.backgroundColor}" th:text="${item.name}"
+                              th:classappend="${item.id eq category.id} ? 'chip-active':''">
                         </span>
                     </a>
                 </div>

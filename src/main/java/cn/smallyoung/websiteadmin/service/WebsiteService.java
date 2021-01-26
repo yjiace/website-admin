@@ -8,7 +8,6 @@ import cn.hutool.extra.template.TemplateEngine;
 import cn.hutool.extra.template.TemplateUtil;
 import cn.hutool.json.JSONObject;
 import cn.smallyoung.websiteadmin.base.BaseService;
-import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.entity.Website;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.stream.Collectors;
 
 /**
  * @author smallyoung
@@ -54,7 +52,7 @@ public class WebsiteService extends BaseService<Website, String> {
                     jsonObject.set("recommend", articleService.findRecommendArticle());
                     break;
                 case "blog":
-                    jsonObject.set("categories", categoryService.findAll().stream().map(Category::toMap).collect(Collectors.toList()));
+                    jsonObject.set("categories", categoryService.findAll());
                     break;
                 default:
                     break;
