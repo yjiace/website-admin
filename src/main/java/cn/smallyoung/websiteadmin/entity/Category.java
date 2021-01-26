@@ -38,19 +38,15 @@ public class Category extends BaseEntity implements Serializable {
     private String name;
 
     @JsonIgnore
-    @OneToMany(mappedBy="category")
+    @OneToMany(mappedBy="category", fetch = FetchType.LAZY)
     @OrderBy(value = " weight desc ")
     private List<Article> articles;
 
     @Column(name = "background_color")
     private String backgroundColor;
 
-    @Transient
-    private Integer count;
-
     public Map<String, Object> toMap(){
         return Dict.create().set("id", this.id).set("name", this.name)
-                .set("backgroundColor", this.backgroundColor)
-                .set("count", this.articles != null ? this.articles.size() : 0);
+                .set("backgroundColor", this.backgroundColor);
     }
 }

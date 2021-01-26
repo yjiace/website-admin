@@ -80,4 +80,9 @@ public class MessageNotificationService extends BaseService<MessageNotification,
     public List<MessageNotification> findByIdIn(List<String> ids){
         return messageNotificationDao.findByIdIn(ids);
     }
+
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateIsDeleteByIdIn(List<String> ids){
+        return messageNotificationDao.updateIsDeleteByIdIn(ids);
+    }
 }

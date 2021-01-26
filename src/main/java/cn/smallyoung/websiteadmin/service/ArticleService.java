@@ -58,8 +58,9 @@ public class ArticleService extends BaseService<Article, String> {
     @Resource
     private BaiduSiteApiInclusion baiduSiteApiInclusion;
 
-    public List<Article> findByIdIn(List<String> ids){
-        return articleDao.findByIdIn(ids);
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateIsDeleteByIdIn(List<String> ids){
+        return articleDao.updateIsDeleteByIdIn(ids);
     }
 
     public Page<Map<String, Object>> findArticle(String category, Integer page, Integer size) {

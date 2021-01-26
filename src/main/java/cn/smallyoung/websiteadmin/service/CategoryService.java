@@ -1,10 +1,10 @@
 package cn.smallyoung.websiteadmin.service;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.io.file.FileWriter;
 import cn.hutool.core.lang.Dict;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.template.Template;
 import cn.hutool.extra.template.TemplateConfig;
 import cn.hutool.extra.template.TemplateEngine;
@@ -38,23 +38,22 @@ public class CategoryService extends BaseService<Category, String> {
     @Resource
     private CategoryDao categoryDao;
 
+    @Transactional(rollbackFor = Exception.class)
+    public Integer updateIsDeleteByIdIn(List<String> ids){
+        return categoryDao.updateIsDeleteByIdIn(ids);
+    }
+
     public List<Map<String, Object>> findAllCategory() {
         List<Category> categories = this.findAll();
         return categories.stream().map(Category::toMap).collect(Collectors.toList());
     }
 
-    public void staticCategory(String id){
-        List<Category> categories = new ArrayList<>();
-        if (StrUtil.isNotBlank(id)){
-            Optional<Category> optional = this.findById(id);
-            if(!optional.isPresent()){
-                String error = String.format("根据ID【%s】没有找到该分类", id);
-                log.error(error);
-                throw new UsernameNotFoundException(error);
-            }
-            categories.add(optional.get());
-        }else {
-            categories = categoryDao.findAll();
+    public void staticCategory(List<String> ids){
+        List<Category> categories = CollUtil.isEmpty(ids) ? categoryDao.findByIdIn(ids) : categoryDao.findAll();
+        if(CollUtil.isEmpty(categories)){
+            String error = String.format("根据ID【%s】没有找到该分类", ids);
+            log.error(error);
+            throw new UsernameNotFoundException(error);
         }
         TemplateEngine engine;
         Template template;

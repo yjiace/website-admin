@@ -39,4 +39,14 @@ public interface MessageNotificationDao extends BaseDao<MessageNotification, Str
      * @return 查询到的信息列表
      */
     List<MessageNotification> findByIdIn(List<String> ids);
+
+    /**
+     * 根据ID列表删除文章
+     *
+     * @param ids id列表
+     * @return 删除条数
+     */
+    @Modifying
+    @Query(value = "update t_message_notification set is_delete = 'Y' where id in ?1 ", nativeQuery = true)
+    Integer updateIsDeleteByIdIn(List<String> ids);
 }

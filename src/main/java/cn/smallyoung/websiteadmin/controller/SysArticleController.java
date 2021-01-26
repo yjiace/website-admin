@@ -201,15 +201,11 @@ public class SysArticleController {
      */
     @DeleteMapping("/delete")
     @PreAuthorize("hasRole('ROLE_ARTICLE_DEL')")
-    public void delete(@RequestParam(value = "ids") List<String> ids) {
+    public Integer delete(@RequestParam(value = "ids") List<String> ids) {
         if (CollUtil.isEmpty(ids)) {
             throw new NullPointerException("参数错误");
         }
-        List<Article> articles = articleService.findByIdIn(ids);
-        if (CollUtil.isNotEmpty(articles)) {
-            articles.forEach(a -> a.setIsDelete("Y"));
-            articleService.save(articles);
-        }
+        return articleService.updateIsDeleteByIdIn(ids);
     }
 
     /**

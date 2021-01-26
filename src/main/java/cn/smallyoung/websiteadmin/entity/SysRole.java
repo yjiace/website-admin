@@ -39,7 +39,7 @@ public class SysRole extends BaseEntity implements Serializable {
     @DataName(name = "权限")
     @Where(clause = " is_delete = 'N' ")
     @OrderBy(value = " order_number desc ")
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinTable(name = "t_sys_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
     private List<SysPermission> sysPermissions = new ArrayList<>();
 }

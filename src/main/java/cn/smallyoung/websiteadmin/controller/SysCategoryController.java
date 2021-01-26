@@ -1,5 +1,6 @@
 package cn.smallyoung.websiteadmin.controller;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
@@ -37,12 +38,34 @@ public class SysCategoryController {
         return categoryService.findAll();
     }
 
+
+    /**
+     * 根据ID查询文章详情
+     *
+     * @param id 文章ID
+     * @return 文章对象
+     */
+    @GetMapping("/findById")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_SAVE')")
+    public Category findById(String id) {
+        if (StrUtil.isBlank(id)) {
+            throw new NullPointerException("参数错误");
+        }
+        Optional<Category> optional = categoryService.findById(id);
+        if (optional.isPresent()) {
+            return optional.get();
+        }
+        log.error("获取文章对象失败");
+        throw new RuntimeException("获取文章对象失败");
+    }
+
+
     /**
      * 保存
      *
-     * @param id              类型ID
-     * @param name            类型名称
-     * @param backgroundColor 类型背景颜色
+     * @param id              分类ID
+     * @param name            分类名称
+     * @param backgroundColor 分类背景颜色
      */
     @PostMapping("save")
     @PreAuthorize("hasRole('ROLE_CATEGORY_SAVE')")
@@ -68,26 +91,25 @@ public class SysCategoryController {
     }
 
     /**
-     * 删除类型
+     * 删除分类
      *
-     * @param id 类型ID
+     * @param ids 分类ID
      */
     @DeleteMapping("delete")
     @PreAuthorize("hasRole('ROLE_CATEGORY_DEL')")
-    public void delete(String id) {
-        Optional<Category> optional = categoryService.findById(id);
-        if (!optional.isPresent()) {
-            String error = String.format("根据ID【%s】没有找到该分类", id);
-            log.error(error);
-            throw new UsernameNotFoundException(error);
+    public Integer delete(@RequestParam(value = "ids") List<String> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            throw new NullPointerException("参数错误");
         }
-        Category category = optional.get();
-        category.setIsDelete("Y");
-        categoryService.save(category);
+        return categoryService.updateIsDeleteByIdIn(ids);
     }
 
+    /**
+     * 根据id初始化
+     * @param ids 分类ID
+     */
     @GetMapping("staticCategory")
-    public void staticCategory(@RequestParam(defaultValue = "")  String id){
-        categoryService.staticCategory(id);
+    public void staticCategory(@RequestParam(value = "ids") List<String> ids){
+        categoryService.staticCategory(ids);
     }
 }

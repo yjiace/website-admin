@@ -68,7 +68,7 @@ public class SysUser extends BaseEntity implements Serializable, UserDetails {
     private String status;
 
     @Where(clause = " is_delete = 'N' ")
-    @ManyToMany(cascade = CascadeType.REFRESH)
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinTable(name = "t_sys_user_role", joinColumns = {@JoinColumn(name = "username")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
     private List<SysRole> roles = new ArrayList<>();
 

@@ -79,16 +79,11 @@ public class MessageNotificationController {
      * @param ids 主键ID
      */
     @DeleteMapping(value = "deleteMessageNotification")
-    public List<MessageNotification> deleteMessageNotification(@RequestParam(value = "ids") List<String> ids) {
+    public Integer deleteMessageNotification(@RequestParam(value = "ids") List<String> ids) {
         if (CollUtil.isEmpty(ids)) {
             throw new NullPointerException("参数错误");
         }
-        List<MessageNotification> messageNotifications = messageNotificationService.findByIdIn(ids);
-        if (CollUtil.isNotEmpty(messageNotifications)) {
-            messageNotifications.forEach(m -> m.setIsDelete("Y"));
-            messageNotificationService.save(messageNotifications);
-        }
-        return messageNotifications;
+        return messageNotificationService.updateIsDeleteByIdIn(ids);
     }
 
 

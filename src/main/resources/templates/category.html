@@ -87,8 +87,7 @@
                 <div class="tag-chips" id="categories">
                     <a th:href="'/'+${item.id}+'/1.html'" th:each=" item : ${categories}">
                         <span class="chip center-align waves-effect waves-light chip-default categories-span" th:attr="id=${item.id}"
-                              th:style = "'background-color:'+${item.backgroundColor}">
-                           [[${item.name}]] <span class="tag-length" th:text="${item.count}"></span>
+                              th:style = "'background-color:'+${item.backgroundColor}" th:text="${item.name}">
                         </span>
                     </a>
                 </div>

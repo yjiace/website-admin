@@ -2,6 +2,7 @@ package cn.smallyoung.websiteadmin.dao;
 
 import cn.smallyoung.websiteadmin.base.BaseDao;
 import cn.smallyoung.websiteadmin.entity.Article;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -20,10 +21,12 @@ public interface ArticleDao  extends BaseDao<Article, String> {
     List<Article> findEffectiveArticle();
 
     /**
-     * 根据ID列表查询文章信息
+     * 根据ID列表删除文章
      *
      * @param ids id列表
-     * @return 查询到的文章列表
+     * @return 删除条数
      */
-    List<Article> findByIdIn(List<String> ids);
+    @Modifying
+    @Query(value = "update t_article set is_delete = 'Y', update_time = now() where id in ?1 ", nativeQuery = true)
+    Integer updateIsDeleteByIdIn(List<String> ids);
 }
