@@ -76,7 +76,7 @@ public class NoteController {
         noteMenusService.save(menus);
     }
 
-    @DeleteMapping("addMenus")
+    @PostMapping("addMenus")
     public NoteMenus addMenus(String name, HttpServletResponse response){
         if(StrUtil.hasBlank(name)){
             log.error("参数错误");
@@ -91,7 +91,7 @@ public class NoteController {
         return noteMenusService.save(menus);
     }
 
-    @DeleteMapping("updateMenus")
+    @PostMapping("updateMenus")
     public NoteMenus updateMenus(String id, String name, HttpServletResponse response){
         if(StrUtil.hasBlank(id, name)){
             log.error("参数错误");
