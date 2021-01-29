@@ -65,7 +65,7 @@ public class SysUserService extends BaseService<SysUser, String> implements User
         }
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(sysUser, null, sysUser.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return jwtTokenUtil.generateToken(sysUser);
+        return jwtTokenUtil.generateToken(sysUser.getUsername(), JwtTokenUtil.UserType.SYS);
     }
 
     /**
@@ -85,6 +85,10 @@ public class SysUserService extends BaseService<SysUser, String> implements User
      */
     public List<SysUser> findByUsernameIn(List<String> usernames) {
         return CollUtil.isNotEmpty(usernames) ? sysUserDao.findByUsernameInAndStatusAndIsDelete(usernames, "Y", "N") : null;
+    }
+
+    public String getTokenByAliPay(String userId){
+        return jwtTokenUtil.generateToken(userId, JwtTokenUtil.UserType.ALIPAY);
     }
 
 }

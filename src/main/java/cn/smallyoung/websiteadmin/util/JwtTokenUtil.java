@@ -5,7 +5,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -79,14 +78,25 @@ public class JwtTokenUtil {
     }
 
     /**
+     * 从token中获取登录用户类型
+     */
+    public UserType getTypeFromToken(String token) {
+        try {
+            Claims claims = getClaimsFromToken(token);
+            return  (UserType)claims.get("userType");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
      * 验证token是否还有效
      *
      * @param token       客户端传入的token
-     * @param userDetails 从数据库中查询出来的用户信息
+     * @param username 从数据库中查询出来的用户名
      */
-    public boolean validateToken(String token, UserDetails userDetails) {
-        String username = getUserNameFromToken(token);
-        return username.equals(userDetails.getUsername()) && isTokenExpired(token);
+    public boolean validateToken(String token, String username) {
+        return getUserNameFromToken(token).equals(username) && isTokenExpired(token);
     }
 
     /**
@@ -108,10 +118,11 @@ public class JwtTokenUtil {
     /**
      * 根据用户信息生成token
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(String username, UserType type) {
         Map<String, Object> claims = new HashMap<>(2);
-        claims.put(CLAIM_KEY_USERNAME, userDetails.getUsername());
+        claims.put(CLAIM_KEY_USERNAME, username);
         claims.put(CLAIM_KEY_CREATED, new Date());
+        claims.put("userType", type);
         return generateToken(claims);
     }
 
@@ -131,6 +142,14 @@ public class JwtTokenUtil {
         return generateToken(claims);
     }
 
-
-
+    public enum UserType{
+        /**
+         * 系统用户
+         */
+        SYS,
+        /**
+         * 支付宝扫码用户
+         */
+        ALIPAY;
+    }
 }

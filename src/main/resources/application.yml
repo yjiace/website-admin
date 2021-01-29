@@ -88,3 +88,17 @@ aj:
 
 baidu:
   siteUrl: http://data.zz.baidu.com/urls?site=https://www.smallyoung.cn&token=123456
+
+alipay:
+  config:
+    redis_key: ALIPAY_USER_TOKEN
+      #token有效期(分)
+    redis_expiration: 20
+    protocol: https
+    gatewayHost: openapi.alipay.com
+    signType: RSA2
+    appId: 
+    #私钥
+    merchantPrivateKey:
+    #支付宝公钥
+    alipayPublicKey:

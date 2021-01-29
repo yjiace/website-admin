@@ -1,5 +1,7 @@
 package cn.smallyoung.websiteadmin;
 
+import com.alipay.easysdk.factory.Factory;
+import com.alipay.easysdk.kernel.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,19 @@ public class WebsiteAdminApplication {
 
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
+    @Value("${alipay.config.appId}")
+    private String appId;
+    @Value("${alipay.config.protocol}")
+    private String protocol;
+    @Value("${alipay.config.gatewayHost}")
+    private String gatewayHost;
+    @Value("${alipay.config.signType}")
+    private String signType;
+    @Value("${alipay.config.merchantPrivateKey}")
+    private String merchantPrivateKey;
+    @Value("${alipay.config.alipayPublicKey}")
+    private String alipayPublicKey;
+
     @Autowired
     private MultipartConfigElement multipartConfigElement;
 
@@ -52,6 +67,18 @@ public class WebsiteAdminApplication {
         corsConfiguration.setMaxAge(3000L);
         source.registerCorsConfiguration("/**", corsConfiguration);
         return new CorsFilter(source);
+    }
+
+    @Bean
+    public void alipayConfig(){
+        Config config = new Config();
+        config.protocol = protocol;
+        config.gatewayHost = gatewayHost;
+        config.signType = signType;
+        config.appId = appId;
+        config.merchantPrivateKey = merchantPrivateKey;
+        config.alipayPublicKey = alipayPublicKey;
+        Factory.setOptions(config);
     }
 
     @Bean

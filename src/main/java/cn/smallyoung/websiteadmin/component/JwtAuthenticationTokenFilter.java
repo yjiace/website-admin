@@ -6,6 +6,7 @@ import cn.smallyoung.websiteadmin.service.SysUserService;
 import cn.smallyoung.websiteadmin.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -17,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * JWT登录授权过滤器
@@ -35,23 +37,42 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     private String tokenHeader;
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    @Value("${alipay.config.redis_key}")
+    private String redisKey;
+    @Value("${alipay.config.redis_expiration}")
+    private Long redisExpiration;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,  FilterChain chain) throws ServletException, IOException {
+        response.setHeader("userId", null);
         String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 SysUser user = sysUserService.loadUserByUsername(username);
-                if (jwtTokenUtil.validateToken(authToken, user)) {
+                if (jwtTokenUtil.validateToken(authToken, user.getUsername())) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                    response.setHeader("userId", user.getUsername());
-                    if(jwtTokenUtil.canRefresh(authToken)){
-                        response.setHeader(tokenHeader, tokenHead + " " + jwtTokenUtil.refreshToken(authToken));
+                }
+            }
+            if(jwtTokenUtil.canRefresh(authToken)){
+                if(jwtTokenUtil.getTypeFromToken(authToken) == JwtTokenUtil.UserType.ALIPAY){
+                    Boolean haveToken = redisTemplate.opsForSet().isMember(redisKey, authToken);
+                    if(haveToken != null && haveToken){
+                        String newToken = jwtTokenUtil.refreshToken(authToken);
+                        redisTemplate.opsForSet().add(redisKey, newToken);
+                        redisTemplate.expire(redisKey, redisExpiration, TimeUnit.MINUTES);
+                        response.setHeader(tokenHeader, tokenHead + " " + newToken);
+                        response.setHeader("userId", username);
                     }
+                }else{
+                    String newToken = jwtTokenUtil.refreshToken(authToken);
+                    response.setHeader(tokenHeader, tokenHead + " " + newToken);
+                    response.setHeader("userId", username);
                 }
             }
         }
