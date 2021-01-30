@@ -7,15 +7,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Note;
 import cn.smallyoung.websiteadmin.entity.NoteMenus;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
+import cn.smallyoung.websiteadmin.service.ArticleService;
 import cn.smallyoung.websiteadmin.service.NoteMenusService;
 import cn.smallyoung.websiteadmin.service.NoteService;
+import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +37,8 @@ public class NoteController {
 
     @Resource
     private NoteService noteService;
+    @Resource
+    private ArticleService articleService;
     @Resource
     private NoteMenusService noteMenusService;
 
@@ -103,6 +109,11 @@ public class NoteController {
         menus.setName(name);
         menus.setUpdateTime(LocalDateTime.now());
         return noteMenusService.save(menus);
+    }
+
+    @PostMapping("uploadImg")
+    public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
+        return articleService.uploadImg(file, "/note/" + path + "/");
     }
 
     private NoteMenus getNoteMenus(String id, HttpServletResponse response){
