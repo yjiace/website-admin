@@ -4,6 +4,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.SysUserDao;
+import cn.smallyoung.websiteadmin.entity.SysPermission;
+import cn.smallyoung.websiteadmin.entity.SysRole;
 import cn.smallyoung.websiteadmin.entity.SysUser;
 import cn.smallyoung.websiteadmin.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,6 +50,18 @@ public class SysUserService extends BaseService<SysUser, String> implements User
             log.error(error);
             throw new UsernameNotFoundException(error);
         }
+        user.getAuthorities();
+        return user;
+    }
+
+    public SysUser loadAliPayUser(String userId){
+        SysUser user = new SysUser();
+        user.setUsername(userId);
+        SysPermission permission = new SysPermission();
+        permission.setVal("ROLE_NOTE");
+        SysRole role = new SysRole();
+        role.setSysPermissions(Collections.singletonList(permission));
+        user.setRoles(Collections.singletonList(role));
         user.getAuthorities();
         return user;
     }

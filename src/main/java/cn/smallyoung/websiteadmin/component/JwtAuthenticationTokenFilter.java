@@ -51,14 +51,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                SysUser user = sysUserService.loadUserByUsername(username);
-                if (jwtTokenUtil.validateToken(authToken, user.getUsername())) {
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
-            }
+            boolean isAliPay = false;
             if(jwtTokenUtil.canRefresh(authToken)){
                 if(jwtTokenUtil.getTypeFromToken(authToken) == JwtTokenUtil.UserType.ALIPAY){
                     Boolean haveToken = redisTemplate.opsForSet().isMember(redisKey, authToken);
@@ -68,11 +61,20 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                         redisTemplate.expire(redisKey, redisExpiration, TimeUnit.MINUTES);
                         response.setHeader(tokenHeader, tokenHead + " " + newToken);
                         response.setHeader("userId", username);
+                        isAliPay = true;
                     }
                 }else{
                     String newToken = jwtTokenUtil.refreshToken(authToken);
                     response.setHeader(tokenHeader, tokenHead + " " + newToken);
                     response.setHeader("userId", username);
+                }
+            }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                SysUser user = isAliPay ? sysUserService.loadAliPayUser(username) :  sysUserService.loadUserByUsername(username);
+                if (jwtTokenUtil.validateToken(authToken, user.getUsername())) {
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
         }

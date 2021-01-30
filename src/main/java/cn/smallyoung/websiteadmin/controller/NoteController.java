@@ -11,6 +11,7 @@ import cn.smallyoung.websiteadmin.service.NoteMenusService;
 import cn.smallyoung.websiteadmin.service.NoteService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -27,6 +28,7 @@ import java.util.Optional;
 @RestController
 @ResponseResultBody
 @RequestMapping("note")
+@PreAuthorize("hasAnyRole('ROLE_NOTE')")
 public class NoteController {
 
     @Resource
