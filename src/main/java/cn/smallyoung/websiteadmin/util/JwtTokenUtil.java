@@ -80,10 +80,10 @@ public class JwtTokenUtil {
     /**
      * 从token中获取登录用户类型
      */
-    public UserType getTypeFromToken(String token) {
+    public String getTypeFromToken(String token) {
         try {
             Claims claims = getClaimsFromToken(token);
-            return  (UserType)claims.get("userType");
+            return claims.getOrDefault("userType", "").toString();
         } catch (Exception e) {
             return null;
         }

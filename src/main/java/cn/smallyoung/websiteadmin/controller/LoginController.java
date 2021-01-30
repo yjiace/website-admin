@@ -87,10 +87,9 @@ public class LoginController {
         AlipaySystemOauthTokenResponse response = Factory.Base.OAuth().getToken(request.getParameter("auth_code"));
         if (response != null && StrUtil.isNotBlank(response.getUserId())) {
             String userId = response.getUserId();
-            String token = sysUserService.getTokenByAliPay(userId);
-            redisTemplate.opsForSet().add("ALIPAY_USER_TOKEN", token);
+            redisTemplate.opsForSet().add(redisKey, userId);
             redisTemplate.expire(redisKey, redisExpiration, TimeUnit.MINUTES);
-            return Dict.create().set("token", tokenHead + " " + token);
+            return Dict.create().set("token", tokenHead + " " + sysUserService.getTokenByAliPay(userId));
         }
         log.error("支付宝扫码登录失败");
         throw new RuntimeException("支付宝扫码登录失败");

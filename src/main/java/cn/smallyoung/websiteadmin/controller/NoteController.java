@@ -28,7 +28,7 @@ import java.util.Optional;
 @RestController
 @ResponseResultBody
 @RequestMapping("note")
-@PreAuthorize("hasAnyRole('ROLE_NOTE')")
+@PreAuthorize("hasRole('ROLE_NOTE')")
 public class NoteController {
 
     @Resource

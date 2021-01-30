@@ -53,13 +53,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             boolean isAliPay = false;
             if(jwtTokenUtil.canRefresh(authToken)){
-                if(jwtTokenUtil.getTypeFromToken(authToken) == JwtTokenUtil.UserType.ALIPAY){
-                    Boolean haveToken = redisTemplate.opsForSet().isMember(redisKey, authToken);
+                if(JwtTokenUtil.UserType.ALIPAY.name().equals(jwtTokenUtil.getTypeFromToken(authToken))){
+                    Boolean haveToken = redisTemplate.opsForSet().isMember(redisKey, username);
                     if(haveToken != null && haveToken){
-                        String newToken = jwtTokenUtil.refreshToken(authToken);
-                        redisTemplate.opsForSet().add(redisKey, newToken);
+                        redisTemplate.opsForSet().add(redisKey, username);
                         redisTemplate.expire(redisKey, redisExpiration, TimeUnit.MINUTES);
-                        response.setHeader(tokenHeader, tokenHead + " " + newToken);
+                        response.setHeader(tokenHeader, tokenHead + " " + jwtTokenUtil.refreshToken(authToken));
                         response.setHeader("userId", username);
                         isAliPay = true;
                     }
