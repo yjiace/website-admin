@@ -35,9 +35,6 @@ public class LoginController {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
-    @Value("${alipay.config.appId}")
-    private String appId;
     @Value("${alipay.config.redis_key}")
     private String redisKey;
     @Value("${alipay.config.redis_expiration}")

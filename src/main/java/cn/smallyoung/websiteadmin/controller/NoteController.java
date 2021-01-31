@@ -12,7 +12,9 @@ import cn.smallyoung.websiteadmin.service.NoteMenusService;
 import cn.smallyoung.websiteadmin.service.NoteService;
 import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,12 +37,18 @@ import java.util.Optional;
 @PreAuthorize("hasRole('ROLE_NOTE')")
 public class NoteController {
 
+
+    @Value("${alipay.config.redis_key}")
+    private String redisKey;
+
     @Resource
     private NoteService noteService;
     @Resource
     private ArticleService articleService;
     @Resource
     private NoteMenusService noteMenusService;
+    @Resource
+    private RedisTemplate<String, Object> redisTemplate;
 
     @GetMapping
     public Dict index(HttpServletResponse response) {
@@ -58,20 +66,35 @@ public class NoteController {
     }
 
     /**
+     * 获取笔记内容
+     *
+     * @param id 文章ID
+     */
+    @GetMapping("getContentById")
+    public String getContentById(String id) {
+        if (StrUtil.isBlank(id)) {
+            throw new NullPointerException("参数错误");
+        }
+        Optional<Note> optional = noteService.findById(id);
+        return optional.map(note -> EscapeUtil.escape(note.getContent())).orElse(null);
+    }
+
+    /**
      * 更改Markdown内容
      *
-     * @param id        笔记ID
-     * @param mdContent Markdown内容
+     * @param id      笔记ID
+     * @param content Markdown内容
      */
     @PostMapping("updateContent")
-    public Note updateContent(String id, String mdContent, HttpServletResponse response) {
+    public Note updateContent(String id, String content, HttpServletResponse response) {
         getNoteMenus(id, response);
         Note note = new Note();
         Optional<Note> optional = noteService.findById(id);
         if (optional.isPresent()) {
             note = optional.get();
         }
-        note.setContent(mdContent);
+        note.setId(id);
+        note.setContent(content);
         note.setUpdateTime(LocalDateTime.now());
         return noteService.save(note);
     }
@@ -93,7 +116,7 @@ public class NoteController {
         NoteMenus menus = new NoteMenus();
         menus.setUserId(getUserId(response));
         menus.setName(name);
-        menus.setIsDelete("Y");
+        menus.setIsDelete("N");
         menus.setCreateTime(LocalDateTime.now());
         menus.setUpdateTime(LocalDateTime.now());
         return noteMenusService.save(menus);
@@ -111,9 +134,15 @@ public class NoteController {
         return noteMenusService.save(menus);
     }
 
-    @PostMapping("uploadImg")
-    public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
+    @PostMapping("uploadImg/{path}")
+    public String uploadImg(MultipartFile file, @PathVariable String path) throws IOException, UpException {
         return articleService.uploadImg(file, "/note/" + path + "/");
+    }
+
+    @PostMapping("logout")
+    public void logout(HttpServletResponse response) {
+        String userId = getUserId(response);
+        redisTemplate.opsForSet().remove(redisKey, userId);
     }
 
     private NoteMenus getNoteMenus(String id, HttpServletResponse response) {
