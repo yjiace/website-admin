@@ -43,13 +43,13 @@ public class NoteController {
     private NoteMenusService noteMenusService;
 
     @GetMapping
-    public Dict index(HttpServletResponse response){
+    public Dict index(HttpServletResponse response) {
         getUserId(response);
         List<NoteMenus> noteMenusList = noteMenusService.findAll(Sort.by(Sort.Direction.DESC, "createTime"));
         String content = "";
-        if(CollUtil.isNotEmpty(noteMenusList)){
+        if (CollUtil.isNotEmpty(noteMenusList)) {
             Optional<Note> note = noteService.findById(noteMenusList.get(0).getId());
-            if(note.isPresent()){
+            if (note.isPresent()) {
                 content = note.get().getContent();
             }
         }
@@ -60,15 +60,15 @@ public class NoteController {
     /**
      * 更改Markdown内容
      *
-     * @param id          笔记ID
-     * @param mdContent   Markdown内容
+     * @param id        笔记ID
+     * @param mdContent Markdown内容
      */
     @PostMapping("updateContent")
     public Note updateContent(String id, String mdContent, HttpServletResponse response) {
         getNoteMenus(id, response);
         Note note = new Note();
         Optional<Note> optional = noteService.findById(id);
-        if(optional.isPresent()){
+        if (optional.isPresent()) {
             note = optional.get();
         }
         note.setContent(mdContent);
@@ -77,7 +77,7 @@ public class NoteController {
     }
 
     @DeleteMapping("delMenus")
-    public void delMenus(String id, HttpServletResponse response){
+    public void delMenus(String id, HttpServletResponse response) {
         NoteMenus menus = getNoteMenus(id, response);
         menus.setIsDelete("Y");
         menus.setUpdateTime(LocalDateTime.now());
@@ -85,8 +85,8 @@ public class NoteController {
     }
 
     @PostMapping("addMenus")
-    public NoteMenus addMenus(String name, HttpServletResponse response){
-        if(StrUtil.hasBlank(name)){
+    public NoteMenus addMenus(String name, HttpServletResponse response) {
+        if (StrUtil.hasBlank(name)) {
             log.error("参数错误");
             throw new RuntimeException("参数错误");
         }
@@ -100,8 +100,8 @@ public class NoteController {
     }
 
     @PostMapping("updateMenus")
-    public NoteMenus updateMenus(String id, String name, HttpServletResponse response){
-        if(StrUtil.hasBlank(id, name)){
+    public NoteMenus updateMenus(String id, String name, HttpServletResponse response) {
+        if (StrUtil.hasBlank(id, name)) {
             log.error("参数错误");
             throw new RuntimeException("参数错误");
         }
@@ -116,23 +116,23 @@ public class NoteController {
         return articleService.uploadImg(file, "/note/" + path + "/");
     }
 
-    private NoteMenus getNoteMenus(String id, HttpServletResponse response){
-        if(StrUtil.isBlank(id)){
+    private NoteMenus getNoteMenus(String id, HttpServletResponse response) {
+        if (StrUtil.isBlank(id)) {
             log.error("参数错误");
             throw new RuntimeException("参数错误");
         }
         String userId = getUserId(response);
         NoteMenus noteMenus = noteMenusService.findByIdAndUserId(id, userId);
-        if(noteMenus == null){
+        if (noteMenus == null) {
             log.error("未获取笔记菜单");
             throw new RuntimeException("未获取笔记菜单");
         }
         return noteMenus;
     }
 
-    private String getUserId(HttpServletResponse response){
+    private String getUserId(HttpServletResponse response) {
         String userId = response.getHeader("userId");
-        if(StrUtil.isBlank(userId)){
+        if (StrUtil.isBlank(userId)) {
             log.error("未获取到用户信息");
             throw new RuntimeException("未获取到用户信息");
         }
