@@ -64,7 +64,7 @@ jwt:
   secret: smallyoung
   #token有效期(分)
   expiration: 1440
-  redis_key: ALIPAY_USER_TOKEN
+  redis_key: ALIPAY_USER_TOKEN_
 
 default:
   password: 123456

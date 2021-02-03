@@ -70,8 +70,7 @@ public class LoginController {
         }
         SysUser sysUser = sysUserService.loadUserByUsername(username);
         String token = sysUserService.login(sysUser, password);
-        redisTemplate.opsForSet().add(redisKey, sysUser.getUsername());
-        redisTemplate.expire(redisKey, expiration, TimeUnit.MINUTES);
+        redisTemplate.opsForValue().set(redisKey + username, token, expiration, TimeUnit.MINUTES);
         log.info("用户【{}】登录系统", username);
         List<SysPermission> sysPermissionList = sysUser.getAllPermission();
         return Dict.create().set("token", tokenHead + " " + token)
@@ -86,9 +85,9 @@ public class LoginController {
         AlipaySystemOauthTokenResponse response = Factory.Base.OAuth().getToken(request.getParameter("auth_code"));
         if (response != null && StrUtil.isNotBlank(response.getUserId())) {
             String userId = response.getUserId();
-            redisTemplate.opsForSet().add(redisKey, userId);
-            redisTemplate.expire(redisKey, expiration, TimeUnit.MINUTES);
-            return Dict.create().set("token", tokenHead + " " + sysUserService.getTokenByAliPay(userId));
+            String token = sysUserService.getTokenByAliPay(userId);
+            redisTemplate.opsForValue().set(redisKey + userId, token, expiration, TimeUnit.MINUTES);
+            return Dict.create().set("token", tokenHead + " " + token);
         }
         log.error("支付宝扫码登录失败");
         throw new RuntimeException("支付宝扫码登录失败");

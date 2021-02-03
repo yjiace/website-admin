@@ -19,12 +19,13 @@ import java.io.IOException;
 
 /**
  * 退出成功处理器
+ *
  * @author SmallYoung
  * @date 2021/2/3
  */
 @Slf4j
 @Component
-public class LogoutHandler implements LogoutSuccessHandler {
+public class RestLogoutHandler implements LogoutSuccessHandler {
 
     @Value("${jwt.tokenHeader}")
     private String tokenHeader;
@@ -44,8 +45,8 @@ public class LogoutHandler implements LogoutSuccessHandler {
         if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
-            if(username != null){
-                redisTemplate.opsForSet().remove(redisKey, username);
+            if (username != null) {
+                redisTemplate.delete(redisKey + username);
                 response.setCharacterEncoding("UTF-8");
                 response.setContentType("application/json");
                 response.getWriter().println(JSONUtil.parse(Result.result(ResultStatus.SUCCESS, "退出成功")));

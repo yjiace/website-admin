@@ -1,9 +1,9 @@
 package cn.smallyoung.websiteadmin.config;
 
 import cn.smallyoung.websiteadmin.component.JwtAuthenticationTokenFilter;
-import cn.smallyoung.websiteadmin.component.LogoutHandler;
+import cn.smallyoung.websiteadmin.component.RestLogoutHandler;
 import cn.smallyoung.websiteadmin.component.RestAuthenticationEntryPoint;
-import cn.smallyoung.websiteadmin.component.RestfulAccessDeniedHandler;
+import cn.smallyoung.websiteadmin.component.RestAccessDeniedHandler;
 import cn.smallyoung.websiteadmin.service.SysUserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,13 +31,13 @@ import javax.annotation.Resource;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
-    private LogoutHandler logoutHandler;
-    @Resource
     private SysUserService sysUserService;
+    @Resource
+    private RestLogoutHandler restLogoutHandler;
     @Resource
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Resource
-    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    private RestAccessDeniedHandler restAccessDeniedHandler;
     @Resource
     private RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
@@ -66,7 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors()
-                .and().logout().logoutUrl("/logout").logoutSuccessHandler(logoutHandler)
+                .and().logout().logoutUrl("/logout").logoutSuccessHandler(restLogoutHandler)
                 .and()
                 .authorizeRequests()
                 // 允许对于网站静态资源的无授权访问
@@ -93,7 +93,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 添加JWT filter
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         //添加自定义未授权和未登录结果返回
-        httpSecurity.exceptionHandling().accessDeniedHandler(restfulAccessDeniedHandler).authenticationEntryPoint(restAuthenticationEntryPoint);
+        httpSecurity.exceptionHandling().accessDeniedHandler(restAccessDeniedHandler).authenticationEntryPoint(restAuthenticationEntryPoint);
     }
 
 

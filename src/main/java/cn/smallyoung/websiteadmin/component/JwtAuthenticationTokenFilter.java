@@ -59,10 +59,9 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     if(jwtTokenUtil.canRefresh(authToken)){
-                        response.setHeader(tokenHeader, tokenHead + " " +
-                                jwtTokenUtil.refreshToken(authToken, isAliPay ? JwtTokenUtil.UserType.ALIPAY : JwtTokenUtil.UserType.SYS));
-                        redisTemplate.opsForSet().add(redisKey, username);
-                        redisTemplate.expire(redisKey, expiration, TimeUnit.MINUTES);
+                        String newToken = jwtTokenUtil.refreshToken(authToken, isAliPay ? JwtTokenUtil.UserType.ALIPAY : JwtTokenUtil.UserType.SYS);
+                        response.setHeader(tokenHeader, tokenHead + " " + newToken);
+                        redisTemplate.opsForValue().set(redisKey + username, newToken, expiration, TimeUnit.MINUTES);
                     }
                 }
             }
