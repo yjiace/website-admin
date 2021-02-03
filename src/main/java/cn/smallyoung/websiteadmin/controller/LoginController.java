@@ -35,10 +35,10 @@ public class LoginController {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    @Value("${alipay.config.redis_key}")
+    @Value("${jwt.redis_key}")
     private String redisKey;
-    @Value("${alipay.config.redis_expiration}")
-    private Long redisExpiration;
+    @Value("${jwt.expiration}")
+    private Long expiration;
     @Resource
     private CaptchaService captchaService;
     @Resource
@@ -70,6 +70,8 @@ public class LoginController {
         }
         SysUser sysUser = sysUserService.loadUserByUsername(username);
         String token = sysUserService.login(sysUser, password);
+        redisTemplate.opsForSet().add(redisKey, sysUser.getUsername());
+        redisTemplate.expire(redisKey, expiration, TimeUnit.MINUTES);
         log.info("用户【{}】登录系统", username);
         List<SysPermission> sysPermissionList = sysUser.getAllPermission();
         return Dict.create().set("token", tokenHead + " " + token)
@@ -85,7 +87,7 @@ public class LoginController {
         if (response != null && StrUtil.isNotBlank(response.getUserId())) {
             String userId = response.getUserId();
             redisTemplate.opsForSet().add(redisKey, userId);
-            redisTemplate.expire(redisKey, redisExpiration, TimeUnit.MINUTES);
+            redisTemplate.expire(redisKey, expiration, TimeUnit.MINUTES);
             return Dict.create().set("token", tokenHead + " " + sysUserService.getTokenByAliPay(userId));
         }
         log.error("支付宝扫码登录失败");

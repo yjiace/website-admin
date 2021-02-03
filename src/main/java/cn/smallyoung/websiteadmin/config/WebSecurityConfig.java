@@ -1,6 +1,7 @@
 package cn.smallyoung.websiteadmin.config;
 
 import cn.smallyoung.websiteadmin.component.JwtAuthenticationTokenFilter;
+import cn.smallyoung.websiteadmin.component.LogoutHandler;
 import cn.smallyoung.websiteadmin.component.RestAuthenticationEntryPoint;
 import cn.smallyoung.websiteadmin.component.RestfulAccessDeniedHandler;
 import cn.smallyoung.websiteadmin.service.SysUserService;
@@ -29,6 +30,8 @@ import javax.annotation.Resource;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    @Resource
+    private LogoutHandler logoutHandler;
     @Resource
     private SysUserService sysUserService;
     @Resource
@@ -63,6 +66,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().cors()
+                .and().logout().logoutUrl("/logout").logoutSuccessHandler(logoutHandler)
                 .and()
                 .authorizeRequests()
                 // 允许对于网站静态资源的无授权访问
