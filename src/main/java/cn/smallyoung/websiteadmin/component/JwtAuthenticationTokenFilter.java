@@ -51,8 +51,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             String authToken = authHeader.substring(this.tokenHead.length());
             String username = jwtTokenUtil.getUserNameFromToken(authToken);
             if (username != null && jwtTokenUtil.isTokenExpired(authToken)) {
-                Boolean hasRedis = redisTemplate.opsForSet().isMember(redisKey, username);
-                if(hasRedis != null && hasRedis){
+                Object redisVal = redisTemplate.opsForValue().get(redisKey + username);
+                if(redisVal != null){
                     boolean isAliPay = JwtTokenUtil.UserType.ALIPAY.name().equals(jwtTokenUtil.getTypeFromToken(authToken));
                     SysUser user = isAliPay ? sysUserService.loadAliPayUser(username) :  sysUserService.loadUserByUsername(username);
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
