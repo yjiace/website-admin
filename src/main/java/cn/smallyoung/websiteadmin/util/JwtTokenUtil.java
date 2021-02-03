@@ -90,19 +90,9 @@ public class JwtTokenUtil {
     }
 
     /**
-     * 验证token是否还有效
-     *
-     * @param token       客户端传入的token
-     * @param username 从数据库中查询出来的用户名
-     */
-    public boolean validateToken(String token, String username) {
-        return getUserNameFromToken(token).equals(username) && isTokenExpired(token);
-    }
-
-    /**
      * 判断token是否已经失效
      */
-    private boolean isTokenExpired(String token) {
+    public boolean isTokenExpired(String token) {
         Date expiredDate = getExpiredDateFromToken(token);
         return !expiredDate.before(new Date());
     }

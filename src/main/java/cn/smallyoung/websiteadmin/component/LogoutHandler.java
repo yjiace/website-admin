@@ -1,7 +1,7 @@
 package cn.smallyoung.websiteadmin.component;
 
 import cn.hutool.json.JSONUtil;
-import cn.smallyoung.websiteadmin.service.SysUserService;
+import cn.smallyoung.websiteadmin.util.JwtTokenUtil;
 import cn.smallyoung.websiteadmin.util.result.Result;
 import cn.smallyoung.websiteadmin.util.result.ResultStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -26,20 +26,31 @@ import java.io.IOException;
 @Component
 public class LogoutHandler implements LogoutSuccessHandler {
 
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     @Value("${jwt.redis_key}")
     private String redisKey;
     @Resource
-    private SysUserService sysUserService;
+    private JwtTokenUtil jwtTokenUtil;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
             throws IOException, ServletException {
-        redisTemplate.opsForSet().remove(redisKey, sysUserService.currentlyLoggedInUser());
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
-        response.getWriter().println(JSONUtil.parse(Result.result(ResultStatus.SUCCESS, "退出成功")));
-        response.getWriter().flush();
+        String authHeader = request.getHeader(this.tokenHeader);
+        if (authHeader != null && authHeader.startsWith(this.tokenHead)) {
+            String authToken = authHeader.substring(this.tokenHead.length());
+            String username = jwtTokenUtil.getUserNameFromToken(authToken);
+            if(username != null){
+                redisTemplate.opsForSet().remove(redisKey, username);
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json");
+                response.getWriter().println(JSONUtil.parse(Result.result(ResultStatus.SUCCESS, "退出成功")));
+                response.getWriter().flush();
+            }
+        }
     }
 }
