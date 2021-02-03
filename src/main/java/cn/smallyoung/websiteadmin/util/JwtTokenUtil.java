@@ -136,9 +136,10 @@ public class JwtTokenUtil {
     /**
      * 刷新token
      */
-    public String refreshToken(String token) {
+    public String refreshToken(String token, UserType type) {
         Claims claims = getClaimsFromToken(token);
         claims.put(CLAIM_KEY_CREATED, new Date());
+        claims.put("userType", type);
         return generateToken(claims);
     }
 

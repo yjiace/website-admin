@@ -63,7 +63,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                     if(jwtTokenUtil.canRefresh(authToken)){
-                        String newToken = jwtTokenUtil.refreshToken(authToken);
+                        String newToken = jwtTokenUtil.refreshToken(authToken, isAliPay ? JwtTokenUtil.UserType.ALIPAY : JwtTokenUtil.UserType.SYS);
                         response.setHeader(tokenHeader, tokenHead + " " + newToken);
                         response.setHeader("userId", username);
                         if(isAliPay){
