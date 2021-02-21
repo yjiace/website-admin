@@ -40,6 +40,15 @@ public class Category extends BaseEntity implements Serializable {
     @OrderBy(value = " weight desc ")
     private List<Article> articles;
 
+    /**
+     * 背景色
+     */
     @Column(name = "background_color")
     private String backgroundColor;
+
+    /**
+     * 权重
+     */
+    @Column(name = "weight")
+    private Integer weight;
 }

@@ -15,13 +15,15 @@ import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.entity.Category;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -44,7 +46,8 @@ public class CategoryService extends BaseService<Category, String> {
     }
 
     public void staticCategory(List<String> ids){
-        List<Category> categories = CollUtil.isNotEmpty(ids) ? categoryDao.findByIdIn(ids) : categoryDao.findAll();
+        List<Category> categories = CollUtil.isNotEmpty(ids) ? categoryDao.findByIdInOrderByWeightDescCreateTimeDesc(ids) :
+                categoryDao.findAll(Sort.by(Sort.Direction.DESC, "weight","createTime"));
         if(CollUtil.isEmpty(categories)){
             String error = String.format("根据ID【%s】没有找到该分类", ids);
             log.error(error);

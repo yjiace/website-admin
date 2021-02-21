@@ -19,7 +19,7 @@ public interface CategoryDao extends BaseDao<Category, String> {
      * @param ids id列表
      * @return 查询到的列表
      */
-    List<Category> findByIdIn(List<String> ids);
+    List<Category> findByIdInOrderByWeightDescCreateTimeDesc(List<String> ids);
     /**
      * 根据ID列表删除文章
      *

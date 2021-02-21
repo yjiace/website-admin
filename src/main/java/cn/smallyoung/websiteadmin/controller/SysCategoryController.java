@@ -36,7 +36,7 @@ public class SysCategoryController {
     @GetMapping("findAll")
     @PreAuthorize("hasRole('ROLE_CATEGORY')")
     public List<Category> findAll() {
-        return categoryService.findAll(Sort.by(Sort.Direction.DESC, "createTime"));
+        return categoryService.findAll(Sort.by(Sort.Direction.DESC, "weight","createTime"));
     }
 
 
@@ -67,10 +67,11 @@ public class SysCategoryController {
      * @param id              分类ID
      * @param name            分类名称
      * @param backgroundColor 分类背景颜色
+     * @param weight 权重
      */
     @PostMapping("save")
     @PreAuthorize("hasRole('ROLE_CATEGORY_SAVE')")
-    public void save(String id, String name, String backgroundColor) {
+    public void save(String id, String name, String backgroundColor, Integer weight) {
         if (StrUtil.hasBlank(name, backgroundColor)) {
             throw new NullPointerException("参数错误");
         }
@@ -87,6 +88,7 @@ public class SysCategoryController {
             category.setIsDelete("N");
         }
         category.setName(name);
+        category.setWeight(weight);
         category.setBackgroundColor(backgroundColor);
         categoryService.save(category);
     }
