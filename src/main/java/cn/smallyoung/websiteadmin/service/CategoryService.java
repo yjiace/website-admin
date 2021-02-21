@@ -44,7 +44,7 @@ public class CategoryService extends BaseService<Category, String> {
     }
 
     public void staticCategory(List<String> ids){
-        List<Category> categories = CollUtil.isEmpty(ids) ? categoryDao.findByIdIn(ids) : categoryDao.findAll();
+        List<Category> categories = CollUtil.isNotEmpty(ids) ? categoryDao.findByIdIn(ids) : categoryDao.findAll();
         if(CollUtil.isEmpty(categories)){
             String error = String.format("根据ID【%s】没有找到该分类", ids);
             log.error(error);

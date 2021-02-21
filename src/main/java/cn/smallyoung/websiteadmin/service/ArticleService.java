@@ -156,12 +156,8 @@ public class ArticleService extends BaseService<Article, String> {
         //重命名图片地址
         String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
         String localFileName = IdUtil.simpleUUID() + fileSuffix;
-        String filePath = dirPath + File.separator + path + File.separator + localFileName;
-        FileUtil.touch(filePath);
-        FileWriter writer = new FileWriter(filePath, "UTF-8");
-        writer.writeFromStream(file.getInputStream());
         //上传到又拍云
-        Response response = UPYunUtil.writeFile(path + localFileName, writer.getFile(), null);
+        Response response = UPYunUtil.writeFile(path + localFileName, file.getBytes(), null);
         return response.isSuccessful() ? path + localFileName : "";
     }
 
