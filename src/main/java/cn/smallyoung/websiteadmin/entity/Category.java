@@ -51,4 +51,11 @@ public class Category extends BaseEntity implements Serializable {
      */
     @Column(name = "weight")
     private Integer weight;
+
+    @Transient
+    private Integer count;
+
+    public Integer getCount() {
+        return articles != null ? articles.size() : 0;
+    }
 }
