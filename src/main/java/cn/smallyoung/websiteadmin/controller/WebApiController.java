@@ -37,7 +37,7 @@ public class WebApiController {
      * 查询类目
      */
     @GetMapping("findCategory")
-    public List<Category> findCategory(){
+    public List<Category> findCategory() {
         return categoryService.findAll(Sort.by(Sort.Direction.DESC, "createTime"));
     }
 
@@ -46,11 +46,11 @@ public class WebApiController {
      */
     @GetMapping("findArticleByCategory")
     public Page<Map<String, Object>> findArticleByCategory(String category, @RequestParam(defaultValue = "1") Integer page,
-                                                           @RequestParam(defaultValue = "9")Integer size){
-        if(StrUtil.hasBlank(category)){
+                                                           @RequestParam(defaultValue = "9") Integer limit) {
+        if (StrUtil.hasBlank(category)) {
             throw new NullPointerException("Invalid parameter");
         }
-        return articleService.findArticle(category, page, size);
+        return articleService.findArticle(category, page, limit);
     }
 
     /**
@@ -58,15 +58,15 @@ public class WebApiController {
      */
     @GetMapping("findAllArticle")
     public Page<Map<String, Object>> findAllArticle(@RequestParam(defaultValue = "1") Integer page,
-                                                    @RequestParam(defaultValue = "9")Integer size){
-        return articleService.findAll(page, size);
+                                                    @RequestParam(defaultValue = "9") Integer limit) {
+        return articleService.findAll(page, limit);
     }
 
     /**
      * 查询推荐文章列表
      */
     @GetMapping("findRecommendArticle")
-    public List<Map<String, Object>> findRecommendArticle(){
+    public List<Map<String, Object>> findRecommendArticle() {
         return articleService.findRecommendArticle();
     }
 

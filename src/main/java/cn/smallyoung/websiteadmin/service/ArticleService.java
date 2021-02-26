@@ -59,13 +59,13 @@ public class ArticleService extends BaseService<Article, String> {
     private BaiduSiteApiInclusion baiduSiteApiInclusion;
 
     @Transactional(rollbackFor = Exception.class)
-    public Integer updateIsDeleteByIdIn(List<String> ids){
+    public Integer updateIsDeleteByIdIn(List<String> ids) {
         return articleDao.updateIsDeleteByIdIn(ids);
     }
 
-    public Page<Map<String, Object>> findArticle(String category, Integer page, Integer size) {
+    public Page<Map<String, Object>> findArticle(String category, Integer page, Integer limit) {
         Map<String, Object> map = Dict.create().set("AND_INNERJOIN_category-id", category);
-        Pageable pageable = PageRequest.of(page - 1, size,
+        Pageable pageable = PageRequest.of(page - 1, limit,
                 Sort.by(Sort.Direction.DESC, "weight", "createTime"));
 
         Page<Article> articles = this.findAll(map, pageable);
@@ -75,8 +75,8 @@ public class ArticleService extends BaseService<Article, String> {
                 , pageable, articles.getTotalElements());
     }
 
-    public Page<Map<String, Object>> findAll(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page - 1, size,
+    public Page<Map<String, Object>> findAll(Integer page, Integer limit) {
+        Pageable pageable = PageRequest.of(page - 1, limit,
                 Sort.by(Sort.Direction.DESC, "weight", "createTime"));
         Page<Article> articles = this.findAll(Dict.create().set("AND_EQ_status", "Y"), pageable);
 
@@ -91,22 +91,22 @@ public class ArticleService extends BaseService<Article, String> {
         return list.stream().map(Article::toMap).collect(Collectors.toList());
     }
 
-    public void staticAllArticle(){
+    public void staticAllArticle() {
         List<Article> articles = articleDao.findEffectiveArticle();
-        if(CollUtil.isEmpty(articles)){
+        if (CollUtil.isEmpty(articles)) {
             return;
         }
         articles.forEach(this::staticArticle);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public void updateMdContentAndHtmlContent(String id, String mdContent, String htmlContent){
+    public void updateMdContentAndHtmlContent(String id, String mdContent, String htmlContent) {
         Article article = articleDao.getOne(id);
         article.setMdContent(mdContent);
         article.setHtmlContent(htmlContent);
         //生成简介、字数统计
         String content = HtmlUtil.cleanHtmlTag(htmlContent);
-        if(StrUtil.isBlank(article.getIntroduction())){
+        if (StrUtil.isBlank(article.getIntroduction())) {
             String introduction = content.substring(0, 50);
             article.setIntroduction(introduction);
         }
@@ -114,7 +114,7 @@ public class ArticleService extends BaseService<Article, String> {
         staticArticle(article);
     }
 
-    private void staticArticle(Article article){
+    private void staticArticle(Article article) {
         String filePath = articleCatalog + article.getId() + ".html";
         boolean haveFile = (new File(filePath)).isFile();
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
@@ -126,18 +126,18 @@ public class ArticleService extends BaseService<Article, String> {
                 .set("readTime", BigDecimal.valueOf(content.length()).divide(BigDecimal.valueOf(Long.parseLong("500")), BigDecimal.ROUND_UP)));
         FileWriter writer = new FileWriter(filePath, "UTF-8");
         writer.write(result);
-        if(!haveFile){
+        if (!haveFile) {
             String url = StrUtil.format("https://www.smallyoung.cn/article/{}.html", article.getId());
             log.info("百度站长API提交新链，返回结果：" + baiduSiteApiInclusion.inclusion(url));
-            if(StrUtil.isBlank(sitemap)){
+            if (StrUtil.isBlank(sitemap)) {
                 return;
             }
             File file = new File(sitemap);
-            if(!file.isFile()){
+            if (!file.isFile()) {
                 FileUtil.touch(file);
             }
             FileReader fileReader = new FileReader(file);
-            if(fileReader.readLines().stream().noneMatch(s -> s.equals(url))){
+            if (fileReader.readLines().stream().noneMatch(s -> s.equals(url))) {
                 FileAppender appender = new FileAppender(file, 16, true);
                 appender.append(url);
                 appender.flush();
@@ -146,11 +146,11 @@ public class ArticleService extends BaseService<Article, String> {
     }
 
     public String uploadImg(MultipartFile file, String path) throws IOException, UpException {
-        if(file == null || file.isEmpty()){
+        if (file == null || file.isEmpty()) {
             throw new NullPointerException("参数错误");
         }
         String fileName = file.getOriginalFilename();
-        if(StrUtil.isBlank(fileName)){
+        if (StrUtil.isBlank(fileName)) {
             throw new NullPointerException("参数错误");
         }
         //重命名图片地址

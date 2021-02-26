@@ -47,14 +47,14 @@ public class SysArticleController {
      *
      * @param page    页码
      * @param request 参数
-     * @param size    页数
+     * @param limit   页数
      */
     @GetMapping("findAll")
     @PreAuthorize("hasRole('ROLE_ARTICLE')")
     public Page<Article> findAllArticle(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
-                                        @RequestParam(defaultValue = "9") Integer size) {
+                                        @RequestParam(defaultValue = "9") Integer limit) {
         return articleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
-                PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "updateTime")));
+                PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
     }
 
     /**
@@ -152,9 +152,9 @@ public class SysArticleController {
             article = optional.get();
         }
         BeanUtil.copyProperties(articleVO, article);
-        if(StrUtil.isNotBlank(articleVO.getCategoryId())){
+        if (StrUtil.isNotBlank(articleVO.getCategoryId())) {
             Optional<Category> optional = categoryService.findById(articleVO.getCategoryId());
-            if(!optional.isPresent()){
+            if (!optional.isPresent()) {
                 log.error("获取文章类别失败");
                 throw new RuntimeException("获取文章类别失败");
             }
@@ -212,7 +212,7 @@ public class SysArticleController {
      * 静态化所有文章列表
      */
     @PostMapping("staticAllArticle")
-    public void staticAllArticle(){
+    public void staticAllArticle() {
         articleService.staticAllArticle();
     }
 }
