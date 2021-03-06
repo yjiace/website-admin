@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.websiteadmin.entity.Category;
 import cn.smallyoung.websiteadmin.interfaces.ResponseResultBody;
 import cn.smallyoung.websiteadmin.service.CategoryService;
+import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -112,7 +114,7 @@ public class SysCategoryController {
      * @param ids 分类ID
      */
     @GetMapping("staticCategory")
-    public void staticCategory(@RequestParam(value = "ids") List<String> ids){
+    public void staticCategory(@RequestParam(value = "ids") List<String> ids) throws IOException, UpException {
         categoryService.staticCategory(ids);
     }
 }

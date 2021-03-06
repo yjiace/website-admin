@@ -104,11 +104,7 @@
                     <i class="fa fa-bookmark"></i>&nbsp;&nbsp;文章分类
                 </div>
                 <div class="tag-chips">
-                    <a th:href="${item.id}+'/1.html'" th:each=" item : ${categories}">
-                        <span class="chip center-align waves-effect waves-light chip-default categories-span" th:attr="id=${item.id}"
-                              th:style = "'background-color:'+${item.backgroundColor}" th:text="${item.name}">
-                        </span>
-                    </a>
+                    <script src="//cdn.smallyoung.cn/libs/js/category_model.js"></script>
                 </div>
             </div>
         </div>

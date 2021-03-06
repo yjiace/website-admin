@@ -13,6 +13,8 @@ import cn.smallyoung.websiteadmin.base.BaseService;
 import cn.smallyoung.websiteadmin.dao.CategoryDao;
 import cn.smallyoung.websiteadmin.entity.Article;
 import cn.smallyoung.websiteadmin.entity.Category;
+import cn.smallyoung.websiteadmin.util.UPYunUtil;
+import com.upyun.UpException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.io.File;
+import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +48,7 @@ public class CategoryService extends BaseService<Category, String> {
         return categoryDao.updateIsDeleteByIdIn(ids);
     }
 
-    public void staticCategory(List<String> ids){
+    public void staticCategory(List<String> ids) throws IOException, UpException {
         List<Category> categories = CollUtil.isNotEmpty(ids) ? categoryDao.findByIdInOrderByWeightDescCreateTimeDesc(ids) :
                 categoryDao.findAll(Sort.by(Sort.Direction.DESC, "weight","createTime"));
         if(CollUtil.isEmpty(categories)){
@@ -78,11 +81,30 @@ public class CategoryService extends BaseService<Category, String> {
                 template = engine.getTemplate("category.html");
                 result = template.render(Dict.create().set("category", c)
                         .set("pageNo", i).set("page", page)
-                        .set("data", nowPage.stream().map(Article::toMap).collect(Collectors.toList()))
-                        .set("categories", categories));
+                        .set("data", nowPage.stream().map(Article::toMap).collect(Collectors.toList())));
                 writer = new FileWriter(dirPath + c.getId() + File.separator + i + ".html", "UTF-8");
                 writer.write(result);
             }
         }
+        staticCategoryModel();
+    }
+
+    public void staticCategoryModel() throws IOException, UpException {
+        List<Category> categories = categoryDao.findAll(Sort.by(Sort.Direction.DESC, "weight","createTime"));
+        if(CollUtil.isEmpty(categories)){
+            return;
+        }
+        //生成html片段
+        String html = html2js(categories);
+        //生成js代码
+        String js = "document.writeln(\"" + html + "\")";
+        //将js文件写入固定位置
+        UPYunUtil.writeFile("/libs/js/category_model.js", js.getBytes(), null);
+    }
+
+    private String html2js(List<Category> categories){
+        return categories.stream().map(c -> "<a href='"+c.getId()+"/1.html'>" +
+                "<span class='chip center-align waves-effect waves-light chip-default categories-span' id='"+c.getId()+"' style='background-color:"+c.getBackgroundColor()+"'>"
+                + c.getName() +" <span class='tag-length'>"+c.getCount()+"</span></span></a>").collect(Collectors.joining());
     }
 }
