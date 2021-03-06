@@ -185,13 +185,21 @@ public class SysArticleController {
             throw new RuntimeException("获取文章对象失败");
         }
         Article article = optional.get();
+        boolean statics = false;
         if (key.equals("status")) {
             article.setStatus(val);
+            if("Y".equals(val)){
+                statics = true;
+            }
         }
         if (key.equals("recommend")) {
             article.setRecommend(val);
         }
-        return articleService.save(article);
+        articleService.save(article);
+        if(statics){
+            articleService.staticArticle(article);
+        }
+        return article;
     }
 
     /**

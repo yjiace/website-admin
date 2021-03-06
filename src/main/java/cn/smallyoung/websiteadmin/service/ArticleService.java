@@ -111,10 +111,12 @@ public class ArticleService extends BaseService<Article, String> {
             article.setIntroduction(introduction);
         }
         articleDao.save(article);
-        staticArticle(article);
+        if("Y".equals(article.getStatus())){
+            staticArticle(article);
+        }
     }
 
-    private void staticArticle(Article article) {
+    public void staticArticle(Article article) {
         String filePath = articleCatalog + article.getId() + ".html";
         boolean haveFile = (new File(filePath)).isFile();
         TemplateEngine engine = TemplateUtil.createEngine(new TemplateConfig("templates", TemplateConfig.ResourceMode.CLASSPATH));
@@ -156,9 +158,17 @@ public class ArticleService extends BaseService<Article, String> {
         //重命名图片地址
         String fileSuffix = fileName.substring(fileName.lastIndexOf("."));
         String localFileName = IdUtil.simpleUUID() + fileSuffix;
-        //上传到又拍云
-        Response response = UPYunUtil.writeFile(path + localFileName, file.getBytes(), null);
+        Response response;
+        if(StrUtil.isNotBlank(dirPath)){
+            String filePath = dirPath + File.separator + path + File.separator + localFileName;
+            FileUtil.touch(filePath);
+            FileWriter writer = new FileWriter(filePath, "UTF-8");
+            writer.writeFromStream(file.getInputStream());
+            //上传到又拍云
+            response = UPYunUtil.writeFile(path + localFileName, writer.getFile(), null);
+        }else{
+            response = UPYunUtil.writeFile(path + localFileName, file.getBytes(), null);
+        }
         return response.isSuccessful() ? path + localFileName : "";
     }
-
 }
