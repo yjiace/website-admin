@@ -103,7 +103,7 @@ public class CategoryService extends BaseService<Category, String> {
     }
 
     private String html2js(List<Category> categories){
-        return categories.stream().map(c -> "<a href='"+c.getId()+"/1.html'>" +
+        return categories.stream().map(c -> "<a href='/"+c.getId()+"/1.html'>" +
                 "<span class='chip center-align waves-effect waves-light chip-default categories-span' id='"+c.getId()+"' style='background-color:"+c.getBackgroundColor()+"'>"
                 + c.getName() +" <span class='tag-length'>"+c.getCount()+"</span></span></a>").collect(Collectors.joining());
     }
