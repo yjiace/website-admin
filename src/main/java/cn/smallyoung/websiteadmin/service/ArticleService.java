@@ -91,8 +91,8 @@ public class ArticleService extends BaseService<Article, String> {
         return list.stream().map(Article::toMap).collect(Collectors.toList());
     }
 
-    public void staticAllArticle() {
-        List<Article> articles = articleDao.findEffectiveArticle();
+    public void staticAllArticle(List<String> ids) {
+        List<Article> articles = CollUtil.isNotEmpty(ids) ? articleDao.findByIdInAndStatusAndIsDelete(ids, "Y", "N")  : articleDao.findEffectiveArticle();
         if (CollUtil.isEmpty(articles)) {
             return;
         }

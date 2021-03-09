@@ -54,7 +54,7 @@ public class SysArticleController {
     public Page<Article> findAllArticle(@RequestParam(defaultValue = "1") Integer page, HttpServletRequest request,
                                         @RequestParam(defaultValue = "9") Integer limit) {
         return articleService.findAll(WebUtils.getParametersStartingWith(request, "search_"),
-                PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "updateTime")));
+                PageRequest.of(page - 1, limit, Sort.by(Sort.Direction.DESC, "createTime")));
     }
 
     /**
@@ -217,10 +217,11 @@ public class SysArticleController {
     }
 
     /**
-     * 静态化所有文章列表
+     * 根据id静态化文章列表
      */
-    @PostMapping("staticAllArticle")
-    public void staticAllArticle() {
-        articleService.staticAllArticle();
+    @PostMapping("staticArticle")
+    public void staticArticle(@RequestParam(value = "ids") List<String> ids) {
+        articleService.staticAllArticle(ids);
     }
+
 }

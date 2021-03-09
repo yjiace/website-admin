@@ -113,7 +113,7 @@ public class SysCategoryController {
      * 根据id初始化
      * @param ids 分类ID
      */
-    @GetMapping("staticCategory")
+    @PostMapping("staticCategory")
     public void staticCategory(@RequestParam(value = "ids") List<String> ids) throws IOException, UpException {
         categoryService.staticCategory(ids);
     }
