@@ -220,6 +220,7 @@ public class SysArticleController {
      * 根据id静态化文章列表
      */
     @PostMapping("staticArticle")
+    @PreAuthorize("hasRole('ROLE_ARTICLE_UPDATE_MDCONTENT')")
     public void staticArticle(@RequestParam(value = "ids") List<String> ids) {
         articleService.staticAllArticle(ids);
     }

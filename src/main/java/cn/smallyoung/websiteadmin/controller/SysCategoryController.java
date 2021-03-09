@@ -114,6 +114,7 @@ public class SysCategoryController {
      * @param ids 分类ID
      */
     @PostMapping("staticCategory")
+    @PreAuthorize("hasRole('ROLE_CATEGORY_INIT')")
     public void staticCategory(@RequestParam(value = "ids") List<String> ids) throws IOException, UpException {
         categoryService.staticCategory(ids);
     }
