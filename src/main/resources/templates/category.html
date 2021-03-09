@@ -99,7 +99,7 @@
                 <div class="card">
                     <a th:href="'/article/'+${item.id}+'.html'">
                         <div class="card-image tag-image">
-                            <img th:src="@{${item.coverUrl}}" class="responsive-img" th:attr="alt=${item.title}">
+                            <img th:src="@{${item.coverUrl} + '!/format/webp'}" class="responsive-img" th:attr="alt=${item.title}">
                             <span class="card-title" th:text="${item.title}"></span>
                         </div>
                     </a>

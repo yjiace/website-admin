@@ -89,22 +89,22 @@ public class CategoryService extends BaseService<Category, String> {
         staticCategoryModel();
     }
 
+    /**
+     * 初始化分类模块
+     * 重置每个博客页面的分类模块，包含分类名、该类文章数量。
+     */
     public void staticCategoryModel() throws IOException, UpException {
         List<Category> categories = categoryDao.findAll(Sort.by(Sort.Direction.DESC, "weight","createTime"));
         if(CollUtil.isEmpty(categories)){
             return;
         }
         //生成html片段
-        String html = html2js(categories);
+        String html = categories.stream().map(c -> "<a href='/"+c.getId()+"/1.html'>" +
+                "<span class='chip center-align waves-effect waves-light chip-default categories-span' id='"+c.getId()+"' style='background-color:"+c.getBackgroundColor()+"'>"
+                + c.getName() +" <span class='tag-length'>"+c.getCount()+"</span></span></a>").collect(Collectors.joining());
         //生成js代码
         String js = "document.writeln(\"" + html + "\")";
         //将js文件写入固定位置
         UPYunUtil.writeFile("/libs/js/category_model.js", js.getBytes(), null);
-    }
-
-    private String html2js(List<Category> categories){
-        return categories.stream().map(c -> "<a href='/"+c.getId()+"/1.html'>" +
-                "<span class='chip center-align waves-effect waves-light chip-default categories-span' id='"+c.getId()+"' style='background-color:"+c.getBackgroundColor()+"'>"
-                + c.getName() +" <span class='tag-length'>"+c.getCount()+"</span></span></a>").collect(Collectors.joining());
     }
 }
