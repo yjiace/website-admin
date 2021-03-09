@@ -37,8 +37,7 @@
 
 <header class="navbar-fixed" th:include="common :: header"></header>
 
-<div class="bg-cover pd-header post-cover"
-     style="background-image: url('//cdn.smallyoung.cn/libs/image/0.jpg')">
+<div class="bg-cover pd-header post-cover" th:style="'background-image:url(' + ${article.coverUrl} + '!/format/webp)'">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
